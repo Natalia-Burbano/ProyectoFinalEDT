@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane styleClass="pantalla" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.proyectofinal.gui.PanelRecepcion">
+   <top>
+      <VBox spacing="2.0">
+         <children>
+            <Label styleClass="titulo-pantalla" text="Recepcion" />
+            <Label styleClass="texto-suave" text="Llegadas, salidas, cuentas de las reservas y turnos" />
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="16.0" />
+         </BorderPane.margin>
+      </VBox>
+   </top>
+   <left>
+      <ScrollPane fitToWidth="true" prefWidth="380.0" styleClass="scroll">
+         <content>
+            <VBox spacing="16.0">
+               <children>
+                  <VBox spacing="8.0" styleClass="tarjeta-panel">
+                     <children>
+                        <Label styleClass="subtitulo" text="Turno de recepcion" />
+                        <HBox alignment="CENTER_LEFT" spacing="12.0">
+                           <children>
+                              <Label fx:id="etiquetaTurno" styleClass="dato-grande" text="-" />
+                              <Button mnemonicParsing="false" onAction="#pasarTurno" styleClass="boton-secundario" text="Pasar turno" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <VBox spacing="10.0" styleClass="tarjeta-panel">
+                     <children>
+                        <Label styleClass="subtitulo" text="Llegadas y salidas" />
+                        <TextField fx:id="campoReserva" promptText="Codigo de la reserva, por ejemplo R0001" styleClass="campo" />
+                        <HBox spacing="8.0">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#hacerCheckIn" styleClass="boton-principal" text="Check-in" />
+                              <Button mnemonicParsing="false" onAction="#hacerCheckOut" styleClass="boton-secundario" text="Check-out" />
+                           </children>
+                        </HBox>
+                        <Label styleClass="seccion" text="Para hoy (clic para escoger)" />
+                        <VBox fx:id="filasHoy" spacing="4.0" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="8.0" styleClass="tarjeta-panel">
+                     <children>
+                        <Label styleClass="subtitulo" text="Reservas pendientes" />
+                        <Label styleClass="texto-suave" text="Las que pasaron 24 horas sin pagar el anticipo se cancelan" wrapText="true" />
+                        <Button mnemonicParsing="false" onAction="#revisarVencimientos" styleClass="boton-secundario" text="Revisar vencimientos" />
+                        <Label fx:id="etiquetaVencimientos" wrapText="true" />
+                     </children>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </left>
+   <center>
+      <VBox spacing="12.0" styleClass="tarjeta-panel">
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="12.0">
+               <children>
+                  <Label styleClass="subtitulo" text="Folio de la reserva" />
+                  <ComboBox fx:id="comboFolio" prefWidth="160.0" promptText="Escoge una reserva" />
+               </children>
+            </HBox>
+            <HBox spacing="10.0">
+               <children>
+                  <VBox styleClass="resumen">
+                     <children>
+                        <Label fx:id="etiquetaCargos" styleClass="resumen-dinero" text="-" />
+                        <Label styleClass="resumen-texto" text="Cargos" />
+                     </children>
+                  </VBox>
+                  <VBox styleClass="resumen">
+                     <children>
+                        <Label fx:id="etiquetaPagos" styleClass="resumen-dinero" text="-" />
+                        <Label styleClass="resumen-texto" text="Pagos" />
+                     </children>
+                  </VBox>
+                  <VBox styleClass="resumen,resumen-pendiente">
+                     <children>
+                        <Label fx:id="etiquetaSaldo" styleClass="resumen-dinero" text="-" />
+                        <Label styleClass="resumen-texto" text="Saldo por pagar" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <ScrollPane fitToWidth="true" styleClass="scroll" VBox.vgrow="ALWAYS">
+               <content>
+                  <VBox fx:id="filasMovimientos" spacing="4.0" />
+               </content>
+            </ScrollPane>
+            <HBox alignment="CENTER_LEFT" spacing="8.0">
+               <children>
+                  <TextField fx:id="campoConcepto" prefWidth="200.0" promptText="Concepto" styleClass="campo" />
+                  <TextField fx:id="campoValor" prefWidth="110.0" promptText="Valor" styleClass="campo" />
+                  <Button mnemonicParsing="false" onAction="#registrarCargo" styleClass="boton-principal" text="Registrar cargo" />
+                  <Button mnemonicParsing="false" onAction="#registrarPago" styleClass="boton-principal" text="Registrar pago" />
+                  <Button mnemonicParsing="false" onAction="#deshacerUltima" styleClass="boton-secundario" text="Deshacer ultima" />
+               </children>
+            </HBox>
+         </children>
+         <BorderPane.margin>
+            <Insets left="16.0" />
+         </BorderPane.margin>
+      </VBox>
+   </center>
+</BorderPane>

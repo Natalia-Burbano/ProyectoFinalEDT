@@ -273,3 +273,107 @@
 .boton-cerrar:hover {
     -fx-text-fill: #2F3E46;
 }
+
+/* ---------------- etapa 5: piezas que usan Preparacion y Recepcion ---------------- */
+
+.tarjeta-panel {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 16;
+    -fx-padding: 16 18 16 18;
+    -fx-effect: dropshadow(gaussian, rgba(47, 62, 70, 0.08), 10, 0, 0, 2);
+}
+
+.subtitulo {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.dato-grande {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #354F52;
+}
+
+.resumen-dinero {
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+}
+
+/* filas de las tablas hechas a mano */
+.fila-encabezado {
+    -fx-padding: 4 8 6 8;
+    -fx-border-color: transparent transparent #ECE7DF transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.fila-encabezado .label {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #9A9F94;
+}
+
+.fila {
+    -fx-alignment: center-left;
+    -fx-padding: 7 8 7 8;
+    -fx-background-radius: 8;
+}
+
+.fila:hover {
+    -fx-background-color: #F5F2ED;
+}
+
+.fila-clic {
+    -fx-cursor: hand;
+}
+
+.fila-titulo {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.fila-correccion .label {
+    -fx-text-fill: #9A9F94;
+    -fx-font-style: italic;
+}
+
+/* chips de prioridad de la cola de preparacion */
+.chip.prioridad-1 { -fx-background-color: #FBF1D9; -fx-text-fill: #8A6416; }
+.chip.prioridad-2 { -fx-background-color: #ECE7DF; -fx-text-fill: #6B705C; }
+
+.etiqueta-ruta {
+    -fx-background-color: #F5F2ED;
+    -fx-background-radius: 10;
+    -fx-padding: 10;
+    -fx-font-weight: bold;
+    -fx-text-fill: #354F52;
+}
+
+.boton-secundario {
+    -fx-background-color: #E3EAE0;
+    -fx-text-fill: #354F52;
+    -fx-font-weight: bold;
+    -fx-background-radius: 18;
+    -fx-padding: 7 14 7 14;
+    -fx-cursor: hand;
+}
+
+.boton-secundario:hover {
+    -fx-background-color: #D2DDCE;
+}
+
+.boton-principal:disabled,
+.boton-secundario:disabled {
+    -fx-opacity: 0.45;
+}
+
+.campo {
+    -fx-background-color: #F5F2ED;
+    -fx-background-radius: 10;
+    -fx-border-color: #E4DED4;
+    -fx-border-radius: 10;
+    -fx-padding: 7 10 7 10;
+}
+
+.campo:focused {
+    -fx-border-color: #84A98C;
+}
