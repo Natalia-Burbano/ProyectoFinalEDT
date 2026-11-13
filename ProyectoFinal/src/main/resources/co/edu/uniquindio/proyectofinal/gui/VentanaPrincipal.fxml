@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane styleClass="ventana" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.proyectofinal.gui.VentanaPrincipal">
+   <top>
+      <VBox>
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="14.0" styleClass="barra-superior">
+               <children>
+                  <VBox spacing="2.0">
+                     <children>
+                        <Label styleClass="marca" text="Aparta-Suites UQ" />
+                        <Label styleClass="marca-sub" text="Sistema de Gestion de Alojamiento - Salento, Quindio" />
+                     </children>
+                  </VBox>
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Label fx:id="etiquetaFecha" styleClass="fecha" />
+                  <ComboBox fx:id="comboRol" prefWidth="170.0" styleClass="combo-rol" />
+                  <Button mnemonicParsing="false" onAction="#cargarEscenario" styleClass="boton-principal" text="Cargar escenario de prueba" />
+               </children>
+            </HBox>
+            <HBox fx:id="barraPantallas" alignment="CENTER_LEFT" spacing="6.0" styleClass="barra-pantallas">
+               <children>
+                  <Button fx:id="botonAtras" mnemonicParsing="false" onAction="#atras" styleClass="boton-atras" text="&lt;  Atras" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <StackPane fx:id="contenedor" styleClass="contenedor" />
+   </center>
+   <bottom>
+      <Label fx:id="etiquetaMensaje" maxWidth="1.7976931348623157E308" styleClass="barra-mensaje" text="Listo" />
+   </bottom>
+</BorderPane>

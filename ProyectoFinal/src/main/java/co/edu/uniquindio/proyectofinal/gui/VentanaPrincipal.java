@@ -1,0 +1,324 @@
+package co.edu.uniquindio.proyectofinal.gui;
+
+import co.edu.uniquindio.proyectofinal.app.App;
+import co.edu.uniquindio.proyectofinal.estructuras.ListaDoble;
+import co.edu.uniquindio.proyectofinal.estructuras.Pila;
+import co.edu.uniquindio.proyectofinal.modelo.Apartamento;
+import co.edu.uniquindio.proyectofinal.modelo.EstadoApartamento;
+import co.edu.uniquindio.proyectofinal.servicio.SistemaAlojamiento;
+import co.edu.uniquindio.proyectofinal.util.Reloj;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+
+import java.io.IOException;
+import java.net.URL;
+import java.time.format.DateTimeFormatter;
+
+/**
+ * Controlador de la ventana principal (VentanaPrincipal.fxml).
+ * Arriba estan el selector de rol, un boton por pantalla, el boton Atras y el boton para cargar el escenario.
+ * En el centro se muestra la pantalla escogida.
+ * El boton Atras usa una Pila con los nombres de las pantallas por las que se paso.
+ */
+public class VentanaPrincipal {
+
+    // pantallas que ve cada rol (cada nombre corresponde al archivo Panel<Nombre>.fxml)
+    private static final String[] PANTALLAS_HUESPED = {"Inicio", "Reservas", "Calendario", "Huesped"};
+    private static final String[] PANTALLAS_RECEPCIONISTA = {"Inicio", "Reservas", "Recepcion", "Preparacion", "Calendario", "Mapa"};
+    private static final String[] PANTALLAS_ADMINISTRADOR = {"Inicio", "Mapa", "Calendario", "Estadisticas", "Administracion"};
+
+    @FXML private ComboBox<String> comboRol;
+    @FXML private HBox barraPantallas;
+    @FXML private Button botonAtras;
+    @FXML private StackPane contenedor;
+    @FXML private Label etiquetaFecha;
+    @FXML private Label etiquetaMensaje;
+
+    private SistemaAlojamiento sistema;
+    private Pila<String> historial;                        // pantallas anteriores, para el boton Atras
+    private final ListaDoble<PantallaCargada> cargadas;    // pantallas que ya se cargaron una vez
+    private String actual;                                 // nombre de la pantalla que se esta viendo
+
+    /** JavaFX crea el controlador con este constructor cuando carga el fxml. */
+    public VentanaPrincipal() {
+        historial = new Pila<>();
+        cargadas = new ListaDoble<>();
+        actual = null;
+    }
+
+    /**
+     * La llama App despues de cargar el fxml. Deja todo listo y muestra el Inicio.
+     */
+    public void iniciar(SistemaAlojamiento sistema) {
+        this.sistema = sistema;
+        comboRol.getItems().addAll("Huesped", "Recepcionista", "Administrador");
+        comboRol.setValue("Recepcionista");
+        // se conecta despues de poner el valor inicial, para que no se dispare al abrir la ventana
+        comboRol.setOnAction(evento -> cambiarRol());
+        crearBotones();
+        actualizarFecha();
+        irA("Inicio");
+    }
+
+    /**
+     * Muestra otra pantalla. La que se estaba viendo se apila para poder volver con Atras.
+     */
+    public void irA(String nombre) {
+        if (nombre.equals(actual)) {
+            return;
+        }
+        if (actual != null) {
+            historial.apilar(actual);
+        }
+        mostrar(nombre);
+    }
+
+    /**
+     * Vuelve a la pantalla anterior: desapila su nombre y la muestra.
+     * Si la pila esta vacia el boton queda desactivado.
+     */
+    @FXML
+    public void atras() {
+        if (!historial.estaVacia()) {
+            mostrar(historial.desapilar());
+        }
+    }
+
+    /**
+     * Pide a todas las pantallas cargadas que vuelvan a leer los datos.
+     * Se llama despues de cada operacion que cambia algo.
+     */
+    public void refrescarTodo() {
+        for (PantallaCargada p : cargadas) {
+            if (p.controlador != null) {
+                p.controlador.refrescar();
+            }
+        }
+        actualizarFecha();
+    }
+
+    /**
+     * Cuando se escoge otro rol cambian los botones y se vuelve al Inicio.
+     */
+    public void cambiarRol() {
+        historial = new Pila<>();
+        actual = null;
+        crearBotones();
+        irA("Inicio");
+        mostrarMensaje("Ahora estas viendo el sistema como " + comboRol.getValue());
+    }
+
+    /**
+     * Boton "Cargar escenario de prueba".
+     */
+    @FXML
+    public void cargarEscenario() {
+        if (!sistema.apartamentos().estaVacia()) {
+            mostrarMensaje("El escenario ya estaba cargado");
+            return;
+        }
+        try {
+            // TEMPORAL: cuando Gabriel suba el CargadorEscenario, esta linea se cambia por la de su cargador
+            cargarDatosTemporales();
+            refrescarTodo();
+            mostrarMensaje("Escenario de prueba cargado: " + sistema.apartamentos().tamanio() + " apartamentos");
+        } catch (RuntimeException e) {
+            mostrarError("No se pudo cargar el escenario: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Escribe un mensaje en la barra de abajo.
+     */
+    public void mostrarMensaje(String texto) {
+        etiquetaMensaje.setText(texto);
+    }
+
+    /**
+     * Muestra una ventanita de error. La pueden usar todas las pantallas.
+     */
+    public void mostrarError(String texto) {
+        Alert alerta = new Alert(Alert.AlertType.ERROR);
+        alerta.setTitle("Algo salio mal");
+        alerta.setHeaderText(null);
+        alerta.setContentText(texto);
+        alerta.showAndWait();
+    }
+
+    /**
+     * Muestra una ventanita de aviso. La pueden usar todas las pantallas.
+     */
+    public void mostrarAviso(String titulo, String texto) {
+        Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(texto);
+        alerta.showAndWait();
+    }
+
+    public SistemaAlojamiento getSistema() {
+        return sistema;
+    }
+
+    // ------------------ metodos privados de ayuda ------------------
+
+    /**
+     * Pone en el centro la pantalla con ese nombre y la refresca.
+     */
+    private void mostrar(String nombre) {
+        PantallaCargada pantalla = buscarOCargar(nombre);
+        contenedor.getChildren().setAll(pantalla.vista);
+        if (pantalla.controlador != null) {
+            pantalla.controlador.refrescar();
+        }
+        actual = nombre;
+        botonAtras.setDisable(historial.estaVacia());
+        marcarBotonActivo();
+    }
+
+    /**
+     * Si la pantalla ya se habia cargado la devuelve; si no, carga su fxml.
+     * Si el fxml todavia no existe, muestra un aviso de "pantalla en construccion".
+     */
+    private PantallaCargada buscarOCargar(String nombre) {
+        for (PantallaCargada p : cargadas) {
+            if (p.nombre.equals(nombre)) {
+                return p;
+            }
+        }
+
+        PantallaCargada nueva;
+        URL archivo = App.class.getResource(App.RUTA_GUI + "Panel" + nombre + ".fxml");
+        if (archivo == null) {
+            nueva = new PantallaCargada(nombre, pantallaEnConstruccion(nombre), null);
+        } else {
+            try {
+                FXMLLoader cargador = new FXMLLoader(archivo);
+                Parent vista = cargador.load();
+                Pantalla controlador = cargador.getController();
+                controlador.iniciar(sistema, this);
+                nueva = new PantallaCargada(nombre, vista, controlador);
+            } catch (IOException e) {
+                mostrarError("No se pudo abrir la pantalla " + nombre + ": " + e.getMessage());
+                nueva = new PantallaCargada(nombre, pantallaEnConstruccion(nombre), null);
+            }
+        }
+        cargadas.agregarAlFinal(nueva);
+        return nueva;
+    }
+
+    /**
+     * Arma los botones de las pantallas segun el rol escogido.
+     */
+    private void crearBotones() {
+        barraPantallas.getChildren().clear();
+        barraPantallas.getChildren().add(botonAtras);
+
+        for (String nombre : pantallasDelRol()) {
+            Button boton = new Button(nombre);
+            boton.getStyleClass().add("boton-nav");
+            boton.setOnAction(evento -> irA(nombre));
+            barraPantallas.getChildren().add(boton);
+        }
+    }
+
+    /**
+     * Resalta el boton de la pantalla que se esta viendo.
+     */
+    private void marcarBotonActivo() {
+        for (Node nodo : barraPantallas.getChildren()) {
+            if (nodo != botonAtras) {
+                Button boton = (Button) nodo;
+                boton.getStyleClass().remove("boton-nav-activo");
+                if (boton.getText().equals(actual)) {
+                    boton.getStyleClass().add("boton-nav-activo");
+                }
+            }
+        }
+    }
+
+    private String[] pantallasDelRol() {
+        String rol = comboRol.getValue();
+        if ("Huesped".equals(rol)) {
+            return PANTALLAS_HUESPED;
+        }
+        if ("Administrador".equals(rol)) {
+            return PANTALLAS_ADMINISTRADOR;
+        }
+        return PANTALLAS_RECEPCIONISTA;
+    }
+
+    /**
+     * Lo que se muestra mientras una pantalla todavia no esta hecha.
+     */
+    private Parent pantallaEnConstruccion(String nombre) {
+        Label titulo = new Label(nombre);
+        titulo.getStyleClass().add("titulo-pantalla");
+        Label texto = new Label("Esta pantalla todavia esta en construccion.");
+        texto.getStyleClass().add("texto-suave");
+        VBox caja = new VBox(8, titulo, texto);
+        caja.getStyleClass().add("pantalla-vacia");
+        return caja;
+    }
+
+    private void actualizarFecha() {
+        etiquetaFecha.setText(Reloj.ahora().format(DateTimeFormatter.ofPattern("dd/MM/yyyy  HH:mm")));
+    }
+
+    /**
+     * TEMPORAL: unos apartamentos de ejemplo para ver el tablero mientras llega el cargador de Gabriel.
+     * Cuando este el CargadorEscenario se borra este metodo.
+     */
+    private void cargarDatosTemporales() {
+        sistema.registrarApartamento(apartamento("A101", "Cafetal", "A", 1, 1, 2, 60000));
+        sistema.registrarApartamento(apartamento("A102", "Guadua", "A", 1, 2, 4, 65000));
+        sistema.registrarApartamento(apartamento("A201", "Palma de Cera", "A", 2, 2, 4, 70000));
+        sistema.registrarApartamento(apartamento("A202", "Carriel", "A", 2, 3, 6, 75000));
+        sistema.registrarApartamento(apartamento("B101", "Colibri", "B", 1, 1, 2, 60000));
+        sistema.registrarApartamento(apartamento("B102", "Orquidea", "B", 1, 2, 3, 65000));
+
+        // cambiar algunos estados para que se vean todos los colores
+        sistema.buscarApartamento("A102").cambiarEstado(EstadoApartamento.OCUPADO);
+        Apartamento a201 = sistema.buscarApartamento("A201");
+        a201.cambiarEstado(EstadoApartamento.OCUPADO);
+        a201.cambiarEstado(EstadoApartamento.PENDIENTE_PREPARACION);
+        Apartamento a202 = sistema.buscarApartamento("A202");
+        a202.cambiarEstado(EstadoApartamento.OCUPADO);
+        a202.cambiarEstado(EstadoApartamento.PENDIENTE_PREPARACION);
+        a202.cambiarEstado(EstadoApartamento.EN_PREPARACION);
+        sistema.ponerFueraDeServicio("B101", "Arreglo de la tuberia del bano");
+    }
+
+    private Apartamento apartamento(String codigo, String nombre, String bloque, int piso,
+                                    int dormitorios, int capacidad, long tarifaBaja) {
+        ListaDoble<String> caracteristicas = new ListaDoble<>();
+        caracteristicas.agregarAlFinal("Wifi");
+        caracteristicas.agregarAlFinal("Cocina");
+        return new Apartamento(codigo, nombre, bloque, piso, dormitorios, capacidad, caracteristicas,
+                tarifaBaja, tarifaBaja + 12000, tarifaBaja + 30000);
+    }
+
+    /**
+     * Una pantalla que ya se cargo: su nombre, lo que se ve y su controlador.
+     */
+    private static class PantallaCargada {
+        private final String nombre;
+        private final Parent vista;
+        private final Pantalla controlador; // null si la pantalla esta en construccion
+
+        private PantallaCargada(String nombre, Parent vista, Pantalla controlador) {
+            this.nombre = nombre;
+            this.vista = vista;
+            this.controlador = controlador;
+        }
+    }
+}
