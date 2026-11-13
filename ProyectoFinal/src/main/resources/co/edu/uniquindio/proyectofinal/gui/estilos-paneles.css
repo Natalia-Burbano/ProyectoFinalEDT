@@ -1,0 +1,251 @@
+/*
+ * Estilos de las pantallas de Mapa, Estadisticas y Administracion.
+ * Usan los mismos colores de estilos.css (la hoja principal).
+ * Cada .fxml de estas pantallas carga este archivo con stylesheets="@estilos-paneles.css".
+ */
+
+/* ---------------- piezas comunes ---------------- */
+
+.tarjeta-panel {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 16;
+    -fx-padding: 16 18 16 18;
+    -fx-effect: dropshadow(gaussian, rgba(47, 62, 70, 0.08), 10, 0, 0, 2);
+}
+
+.subtitulo {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.resultado {
+    -fx-background-color: #F5F2ED;
+    -fx-background-radius: 10;
+    -fx-padding: 10;
+    -fx-text-fill: #354F52;
+}
+
+.fila {
+    -fx-padding: 6 8 6 8;
+    -fx-background-radius: 8;
+}
+
+.fila:hover {
+    -fx-background-color: #F5F2ED;
+}
+
+.boton-secundario {
+    -fx-background-color: #E3EAE0;
+    -fx-text-fill: #354F52;
+    -fx-font-weight: bold;
+    -fx-background-radius: 18;
+    -fx-padding: 7 14 7 14;
+    -fx-cursor: hand;
+}
+
+.boton-secundario:hover {
+    -fx-background-color: #D2DDCE;
+}
+
+.campo {
+    -fx-background-color: #F5F2ED;
+    -fx-background-radius: 10;
+    -fx-border-color: #E4DED4;
+    -fx-border-radius: 10;
+    -fx-padding: 7 10 7 10;
+}
+
+.campo:focused {
+    -fx-border-color: #84A98C;
+}
+
+.chip.chip-servicio { -fx-background-color: #DDE3E6; -fx-text-fill: #2F3E46; }
+.chip.chip-cerrado  { -fx-background-color: #ECE7DF; -fx-text-fill: #6B705C; }
+
+/* ---------------- mapa ---------------- */
+
+.lienzo-mapa {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 16;
+    -fx-effect: dropshadow(gaussian, rgba(47, 62, 70, 0.08), 10, 0, 0, 2);
+}
+
+.pasillo {
+    -fx-stroke: #B7B7A4;
+    -fx-stroke-width: 2;
+}
+
+.pasillo-cerrado {
+    -fx-stroke: #C9705F;
+    -fx-stroke-width: 2;
+    -fx-stroke-dash-array: 8 6;
+    -fx-opacity: 0.7;
+}
+
+.pasillo-ruta {
+    -fx-stroke: #354F52;
+    -fx-stroke-width: 6;
+    -fx-stroke-line-cap: round;
+}
+
+.pasillo-metros {
+    -fx-font-size: 10px;
+    -fx-text-fill: #7D8478;
+    -fx-background-color: rgba(255, 255, 255, 0.85);
+    -fx-background-radius: 6;
+    -fx-padding: 0 3 0 3;
+}
+
+.nodo {
+    -fx-stroke: #FFFFFF;
+    -fx-stroke-width: 3;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(47, 62, 70, 0.25), 6, 0, 0, 1);
+}
+
+.nodo-preparado { -fx-fill: #7FB08A; }
+.nodo-ocupado   { -fx-fill: #6E8FB5; }
+.nodo-pendiente { -fx-fill: #E2B65A; }
+.nodo-fuera     { -fx-fill: #C9705F; }
+
+.nodo-servicio {
+    -fx-fill: #2F3E46;
+    -fx-arc-width: 10;
+    -fx-arc-height: 10;
+    -fx-cursor: default;
+}
+
+.nodo-inalcanzable {
+    -fx-stroke: #C9705F;
+    -fx-stroke-width: 4;
+    -fx-stroke-dash-array: 4 4;
+}
+
+.nodo-texto {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-pref-width: 44;
+    -fx-alignment: center;
+    -fx-text-fill: #2F3E46;
+}
+
+.nodo-orden {
+    -fx-background-color: #354F52;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-padding: 1 6 1 6;
+}
+
+/* ---------------- estadisticas ---------------- */
+
+.barra-renglon {
+    -fx-alignment: center-left;
+}
+
+.barra-fondo {
+    -fx-background-color: #F1EDE6;
+    -fx-background-radius: 8;
+}
+
+.barra {
+    -fx-background-color: #84A98C;
+    -fx-background-radius: 8;
+}
+
+.barra-valor {
+    -fx-font-weight: bold;
+    -fx-text-fill: #354F52;
+}
+
+.tarjeta-reporte {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 16;
+    -fx-padding: 16 18 16 18;
+    -fx-pref-width: 320;
+    -fx-effect: dropshadow(gaussian, rgba(47, 62, 70, 0.08), 10, 0, 0, 2);
+}
+
+.reporte-renglon {
+    -fx-padding: 4 0 4 0;
+    -fx-border-color: transparent transparent #F1EDE6 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.reporte-valor {
+    -fx-font-weight: bold;
+    -fx-text-fill: #354F52;
+}
+
+/* ---------------- administracion (pestanias) ---------------- */
+
+.pestanas .tab-header-background {
+    -fx-background-color: transparent;
+}
+
+.pestanas .tab {
+    -fx-background-color: #E9E4DC;
+    -fx-background-radius: 12 12 0 0;
+    -fx-padding: 6 14 6 14;
+}
+
+.pestanas .tab:selected {
+    -fx-background-color: #354F52;
+}
+
+.pestanas .tab:selected .tab-label {
+    -fx-text-fill: #FFFFFF;
+}
+
+.pestanas .tab-label {
+    -fx-text-fill: #354F52;
+    -fx-font-weight: bold;
+}
+
+/* ---------------- mapa: lo que se resalta en rutas, recorridos y bloques ---------------- */
+
+/* lo que no hace parte de lo que se esta mostrando se ve apagado */
+.atenuado {
+    -fx-opacity: 0.25;
+}
+
+/* puntos de la ruta o del recorrido: borde oscuro grueso */
+.nodo-resaltado {
+    -fx-stroke: #2F3E46;
+    -fx-stroke-width: 4;
+}
+
+/* numero grande dentro del punto (paso de la ruta u orden del recorrido) */
+.nodo-numero {
+    -fx-pref-width: 44;
+    -fx-alignment: center;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.45), 3, 0, 0, 1);
+}
+
+/* recuadros de los bloques al agrupar */
+.zona-bloque {
+    -fx-arc-width: 30;
+    -fx-arc-height: 30;
+    -fx-stroke-width: 2;
+    -fx-stroke-dash-array: 10 6;
+}
+
+.zona-uno {
+    -fx-fill: rgba(132, 169, 140, 0.16);
+    -fx-stroke: #84A98C;
+}
+
+.zona-dos {
+    -fx-fill: rgba(110, 143, 181, 0.16);
+    -fx-stroke: #6E8FB5;
+}
+
+.zona-titulo {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #354F52;
+}

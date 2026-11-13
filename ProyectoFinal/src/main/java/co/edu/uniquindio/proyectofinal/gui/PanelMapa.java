@@ -10,6 +10,7 @@ import co.edu.uniquindio.proyectofinal.modelo.TipoNodo;
 import co.edu.uniquindio.proyectofinal.servicio.MapaEdificio;
 import co.edu.uniquindio.proyectofinal.servicio.SistemaAlojamiento;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
@@ -42,6 +43,7 @@ public class PanelMapa implements Pantalla {
     private Ruta rutaActual;
     private ListaDoble<NodoMapa> ordenRecorrido;
     private ListaDoble<NodoMapa> inalcanzables;
+    private ListaDoble<GrupoBloque> grupos;
 
     /**
      * Guarda el sistema y la ventana, y deja el dibujo sin nada resaltado.
@@ -79,7 +81,8 @@ public class PanelMapa implements Pantalla {
         rutaActual = mapa().rutaMasCorta(origen, destino);
         etiquetaResultado.setText(rutaActual == null
                 ? "No hay camino de " + origen + " a " + destino + " (puede haber pasillos cerrados)."
-                : "Ruta mas corta: " + rutaActual);
+                : "Ruta mas corta: " + rutaActual
+                + "\n\nEn el mapa la ruta va en verde oscuro y el numero de cada punto es el paso.");
         dibujar();
     }
 
@@ -93,7 +96,8 @@ public class PanelMapa implements Pantalla {
             rutaActual = sistema.rutaPreparacion();
             etiquetaResultado.setText(rutaActual == null
                     ? "No hay apartamentos pendientes de preparacion."
-                    : "Ruta de preparacion: " + rutaActual);
+                    : "Ruta de preparacion: " + rutaActual
+                    + "\n\nEn el mapa la ruta va en verde oscuro y el numero de cada punto es el paso.");
         } catch (RuntimeException e) {
             etiquetaResultado.setText("No se pudo calcular la ruta: " + e.getMessage());
         }
@@ -138,8 +142,9 @@ public class PanelMapa implements Pantalla {
     @FXML
     public void agruparPorBloque() {
         limpiarResaltado();
+        grupos = mapa().agruparPorBloque();
         String texto = "";
-        for (GrupoBloque grupo : mapa().agruparPorBloque()) {
+        for (GrupoBloque grupo : grupos) {
             texto += "Bloque " + grupo.getBloque() + " (" + grupo.cantidad() + "): ";
             String codigos = "";
             for (NodoMapa nodo : grupo.getApartamentos()) {
@@ -147,7 +152,8 @@ public class PanelMapa implements Pantalla {
             }
             texto += codigos + "\n";
         }
-        etiquetaResultado.setText(texto.isEmpty() ? "No hay apartamentos en el mapa." : texto.trim());
+        etiquetaResultado.setText(texto.isEmpty() ? "No hay apartamentos en el mapa."
+                : texto.trim() + "\n\nEn el mapa cada bloque queda dentro de un recuadro de color.");
         dibujar();
     }
 
@@ -178,6 +184,15 @@ public class PanelMapa implements Pantalla {
             lienzo.getChildren().add(vacio);
             etiquetaConexo.setText("");
             return;
+        }
+
+        // si se agrupo por bloque, primero van los recuadros de cada bloque (quedan al fondo)
+        if (grupos != null) {
+            int numero = 0;
+            for (GrupoBloque grupo : grupos) {
+                dibujarZona(grupo, numero);
+                numero++;
+            }
         }
 
         // pasillos: se revisa cada pareja de puntos una sola vez
@@ -211,6 +226,10 @@ public class PanelMapa implements Pantalla {
         } else {
             linea.getStyleClass().add("pasillo-cerrado");
         }
+        // si hay una ruta, los pasillos que no son de la ruta se ven apagados
+        if (rutaActual != null && !estaEnRuta(a, b)) {
+            linea.getStyleClass().add("atenuado");
+        }
 
         // los metros van en la mitad de la linea
         Label etiqueta = new Label(Math.round(metros) + " m");
@@ -226,38 +245,96 @@ public class PanelMapa implements Pantalla {
         double x = nodo.getX();
         double y = nodo.getY();
 
+        // numero que va dentro del punto: el paso de la ruta o el orden del recorrido (0 si no tiene)
+        int numero = 0;
+        if (rutaActual != null) {
+            numero = posicionEn(rutaActual.getNodos(), nodo);
+        } else if (ordenRecorrido != null) {
+            numero = posicionEn(ordenRecorrido, nodo);
+        }
+        boolean apagado = (rutaActual != null && numero == 0) || contiene(inalcanzables, nodo);
+
         if (nodo.getTipo() == TipoNodo.APARTAMENTO) {
             Circle circulo = new Circle(x, y, RADIO);
             circulo.getStyleClass().addAll("nodo", claseDelEstado(nodo));
-            if (contiene(inalcanzables, nodo)) {
-                circulo.getStyleClass().add("nodo-inalcanzable");
-            }
+            marcar(circulo, numero > 0, apagado, contiene(inalcanzables, nodo));
             circulo.setOnMouseClicked(evento -> mostrarApartamento(nodo));
             lienzo.getChildren().add(circulo);
         } else {
             Rectangle cuadro = new Rectangle(x - LADO / 2, y - LADO / 2, LADO, LADO);
             cuadro.getStyleClass().addAll("nodo", "nodo-servicio");
+            marcar(cuadro, numero > 0, apagado, false);
             lienzo.getChildren().add(cuadro);
+        }
+
+        // el numero va grande, centrado dentro de la figura
+        if (numero > 0) {
+            Label etiquetaNumero = new Label(String.valueOf(numero));
+            etiquetaNumero.getStyleClass().add("nodo-numero");
+            etiquetaNumero.setLayoutX(x - RADIO);
+            etiquetaNumero.setLayoutY(y - 11);
+            etiquetaNumero.setMouseTransparent(true);
+            lienzo.getChildren().add(etiquetaNumero);
         }
 
         // el id del punto, centrado debajo de la figura
         Label nombre = new Label(nodo.getId());
         nombre.getStyleClass().add("nodo-texto");
+        if (apagado) {
+            nombre.getStyleClass().add("atenuado");
+        }
         nombre.setLayoutX(x - 22);
         nombre.setLayoutY(y + RADIO + 2);
         nombre.setMouseTransparent(true);
         lienzo.getChildren().add(nombre);
+    }
 
-        // si hay un recorrido BFS o DFS, se pone el numero de orden encima
-        int orden = posicionEn(ordenRecorrido, nodo);
-        if (orden > 0) {
-            Label numero = new Label(String.valueOf(orden));
-            numero.getStyleClass().add("nodo-orden");
-            numero.setLayoutX(x + RADIO - 8);
-            numero.setLayoutY(y - RADIO - 10);
-            numero.setMouseTransparent(true);
-            lienzo.getChildren().add(numero);
+    /**
+     * Le pone a la figura las clases de estilo segun lo que se este mostrando.
+     */
+    private void marcar(Node figura, boolean resaltado, boolean apagado, boolean inalcanzable) {
+        if (resaltado) {
+            figura.getStyleClass().add("nodo-resaltado");
         }
+        if (apagado) {
+            figura.getStyleClass().add("atenuado");
+        }
+        if (inalcanzable) {
+            figura.getStyleClass().add("nodo-inalcanzable");
+        }
+    }
+
+    /**
+     * Recuadro de color detras de los apartamentos de un bloque, con el nombre del bloque.
+     */
+    private void dibujarZona(GrupoBloque grupo, int numero) {
+        if (grupo.getApartamentos().estaVacia()) {
+            return;
+        }
+        double minX = Double.MAX_VALUE;
+        double minY = Double.MAX_VALUE;
+        double maxX = 0;
+        double maxY = 0;
+        for (NodoMapa nodo : grupo.getApartamentos()) {
+            minX = Math.min(minX, nodo.getX());
+            minY = Math.min(minY, nodo.getY());
+            maxX = Math.max(maxX, nodo.getX());
+            maxY = Math.max(maxY, nodo.getY());
+        }
+
+        double margen = 45;
+        Rectangle zona = new Rectangle(minX - margen, minY - margen,
+                (maxX - minX) + 2 * margen, (maxY - minY) + 2 * margen + 15);
+        zona.getStyleClass().addAll("zona-bloque", numero % 2 == 0 ? "zona-uno" : "zona-dos");
+        zona.setMouseTransparent(true);
+
+        Label titulo = new Label("Bloque " + grupo.getBloque());
+        titulo.getStyleClass().add("zona-titulo");
+        titulo.setLayoutX(minX - margen + 10);
+        titulo.setLayoutY(minY - margen + 6);
+        titulo.setMouseTransparent(true);
+
+        lienzo.getChildren().addAll(zona, titulo);
     }
 
     // ------------------ metodos privados de ayuda ------------------
@@ -286,7 +363,8 @@ public class PanelMapa implements Pantalla {
             }
             etiquetaResultado.setText("Se cerro el pasillo " + idA + " - " + idB + ". "
                     + (codigos.isEmpty() ? "Todavia se llega a todos los apartamentos."
-                    : "Ya no se llega a: " + codigos));
+                    : "Ya no se llega a: " + codigos
+                    + ". En el mapa se ven apagados y con borde rojo."));
         }
         dibujar();
     }
@@ -304,7 +382,8 @@ public class PanelMapa implements Pantalla {
         for (NodoMapa nodo : ordenRecorrido) {
             texto += (texto.isEmpty() ? "" : " -> ") + nodo.getId();
         }
-        etiquetaResultado.setText((porNiveles ? "BFS" : "DFS") + " desde " + origen + ": " + texto);
+        etiquetaResultado.setText((porNiveles ? "BFS" : "DFS") + " desde " + origen + ": " + texto
+                + "\n\nEn el mapa el numero dentro de cada punto es el orden en que se visito.");
         dibujar();
     }
 
@@ -417,6 +496,7 @@ public class PanelMapa implements Pantalla {
         rutaActual = null;
         ordenRecorrido = null;
         inalcanzables = null;
+        grupos = null;
     }
 
     private MapaEdificio mapa() {
