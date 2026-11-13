@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" spacing="8"
+      fx:controller="co.edu.uniquindio.proyectofinal.gui.PanelHuesped">
+    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+
+    <HBox spacing="16">
+        <GridPane hgap="8" vgap="6">
+            <Label text="Documento" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <TextField fx:id="tfDocumento" prefWidth="160" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+            <Button text="Buscar" onAction="#buscar" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+            <Label text="Nombre" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <TextField fx:id="tfNombre" prefWidth="220" GridPane.rowIndex="1" GridPane.columnIndex="1" GridPane.columnSpan="2"/>
+            <Label text="Nacimiento" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+            <DatePicker fx:id="dpNacimiento" prefWidth="160" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+            <Label text="Telefono" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+            <TextField fx:id="tfTelefono" prefWidth="160" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+            <Label text="Correo" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+            <TextField fx:id="tfCorreo" prefWidth="220" GridPane.rowIndex="4" GridPane.columnIndex="1" GridPane.columnSpan="2"/>
+            <Label text="Foto (opcional)" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+            <TextField fx:id="tfRutaFoto" editable="false" prefWidth="160" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+            <Button text="Elegir foto" onAction="#elegirFoto" GridPane.rowIndex="5" GridPane.columnIndex="2"/>
+        </GridPane>
+        <VBox spacing="8">
+            <ImageView fx:id="ivFoto" fitWidth="100" fitHeight="100" preserveRatio="true"/>
+            <Button text="Registrar nuevo" onAction="#registrar"/>
+            <Button text="Guardar cambios" onAction="#guardarCambios"/>
+        </VBox>
+    </HBox>
+    <Label fx:id="lblEstado"/>
+
+    <TabPane tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+            <Tab text="Mis reservas">
+                <content>
+                    <VBox spacing="8">
+                        <padding><Insets top="8" right="8" bottom="8" left="8"/></padding>
+                        <TableView fx:id="tablaReservas" prefHeight="200">
+                            <columns>
+                                <TableColumn fx:id="colCodigo" text="Codigo" prefWidth="70"/>
+                                <TableColumn fx:id="colApto" text="Apto" prefWidth="60"/>
+                                <TableColumn fx:id="colEntrada" text="Entrada" prefWidth="90"/>
+                                <TableColumn fx:id="colSalida" text="Salida" prefWidth="90"/>
+                                <TableColumn fx:id="colEstado" text="Estado" prefWidth="90"/>
+                                <TableColumn fx:id="colTotal" text="Total" prefWidth="100"/>
+                                <TableColumn fx:id="colSaldo" text="Saldo del folio" prefWidth="110"/>
+                            </columns>
+                        </TableView>
+                        <Button text="Cancelar (ver devolucion)" onAction="#cancelarReserva"/>
+                    </VBox>
+                </content>
+            </Tab>
+            <Tab text="Favoritos">
+                <content>
+                    <VBox spacing="8">
+                        <padding><Insets top="8" right="8" bottom="8" left="8"/></padding>
+                        <ListView fx:id="lvFavoritos" prefHeight="150"/>
+                        <HBox spacing="8">
+                            <TextField fx:id="tfFavorito" promptText="Codigo del apartamento" prefWidth="170"/>
+                            <Button text="Agregar" onAction="#agregarFavorito"/>
+                            <Button text="Quitar" onAction="#quitarFavorito"/>
+                        </HBox>
+                    </VBox>
+                </content>
+            </Tab>
+            <Tab text="Historial">
+                <content>
+                    <VBox spacing="8">
+                        <padding><Insets top="8" right="8" bottom="8" left="8"/></padding>
+                        <TableView fx:id="tablaHistorial" prefHeight="200">
+                            <columns>
+                                <TableColumn fx:id="colHCodigo" text="Codigo" prefWidth="70"/>
+                                <TableColumn fx:id="colHApto" text="Apto" prefWidth="60"/>
+                                <TableColumn fx:id="colHEntrada" text="Entrada" prefWidth="100"/>
+                                <TableColumn fx:id="colHSalida" text="Salida" prefWidth="100"/>
+                                <TableColumn fx:id="colHTotal" text="Total" prefWidth="110"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </content>
+            </Tab>
+        </tabs>
+    </TabPane>
+</VBox>
