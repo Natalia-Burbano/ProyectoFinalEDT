@@ -1,0 +1,275 @@
+/*
+ * Estilos de toda la aplicacion.
+ * Paleta: verde pizarra oscuro, verde salvia y fondo crema.
+ * Colores de estado suaves: verde Preparado, azul Ocupado, amarillo Pendiente, rojo Fuera de servicio.
+ */
+
+.ventana {
+    -fx-background-color: #F5F2ED;
+    -fx-font-family: "Segoe UI", "Helvetica Neue", "Arial";
+    -fx-font-size: 13px;
+}
+
+.label {
+    -fx-text-fill: #2F3E46;
+}
+
+/* ---------------- barra de arriba ---------------- */
+
+.barra-superior {
+    -fx-background-color: #2F3E46;
+    -fx-padding: 14 24 14 24;
+}
+
+.marca {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.marca-sub,
+.fecha {
+    -fx-text-fill: #CAD2C5;
+    -fx-font-size: 12px;
+}
+
+.combo-rol {
+    -fx-background-color: #3D525B;
+    -fx-background-radius: 18;
+    -fx-padding: 2 8 2 8;
+}
+
+.combo-rol > .list-cell {
+    -fx-text-fill: #FFFFFF;
+}
+
+.combo-rol .arrow {
+    -fx-background-color: #CAD2C5;
+}
+
+.boton-principal {
+    -fx-background-color: #84A98C;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-background-radius: 18;
+    -fx-padding: 8 16 8 16;
+    -fx-cursor: hand;
+}
+
+.boton-principal:hover {
+    -fx-background-color: #6F9378;
+}
+
+/* ---------------- botones de las pantallas ---------------- */
+
+.barra-pantallas {
+    -fx-background-color: #FFFFFF;
+    -fx-padding: 8 24 8 24;
+    -fx-border-color: transparent transparent #E4DED4 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.boton-nav {
+    -fx-background-color: transparent;
+    -fx-text-fill: #354F52;
+    -fx-background-radius: 16;
+    -fx-padding: 6 14 6 14;
+    -fx-cursor: hand;
+}
+
+.boton-nav:hover {
+    -fx-background-color: #E3EAE0;
+}
+
+.boton-nav-activo,
+.boton-nav-activo:hover {
+    -fx-background-color: #354F52;
+    -fx-text-fill: #FFFFFF;
+}
+
+.boton-atras {
+    -fx-background-color: transparent;
+    -fx-border-color: #B7B7A4;
+    -fx-border-radius: 16;
+    -fx-background-radius: 16;
+    -fx-text-fill: #52796F;
+    -fx-padding: 5 14 5 14;
+    -fx-cursor: hand;
+}
+
+.boton-atras:disabled {
+    -fx-opacity: 0.4;
+}
+
+/* ---------------- centro y barra de mensajes ---------------- */
+
+.contenedor {
+    -fx-padding: 22 24 22 24;
+}
+
+.barra-mensaje {
+    -fx-background-color: #E9E4DC;
+    -fx-text-fill: #52796F;
+    -fx-font-size: 12px;
+    -fx-padding: 6 24 6 24;
+}
+
+.titulo-pantalla {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2F3E46;
+}
+
+.texto-suave {
+    -fx-text-fill: #7D8478;
+}
+
+.pantalla-vacia {
+    -fx-alignment: center;
+    -fx-padding: 40;
+}
+
+/* ---------------- tarjetas de resumen ---------------- */
+
+.resumen {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-padding: 12 18 12 18;
+    -fx-min-width: 130;
+    -fx-border-color: transparent transparent transparent #B7B7A4;
+    -fx-border-width: 0 0 0 5;
+    -fx-effect: dropshadow(gaussian, rgba(47, 62, 70, 0.08), 10, 0, 0, 2);
+}
+
+.resumen-preparado { -fx-border-color: transparent transparent transparent #7FB08A; }
+.resumen-ocupado   { -fx-border-color: transparent transparent transparent #6E8FB5; }
+.resumen-pendiente { -fx-border-color: transparent transparent transparent #E2B65A; }
+.resumen-fuera     { -fx-border-color: transparent transparent transparent #C9705F; }
+
+.resumen-numero {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.resumen-texto {
+    -fx-font-size: 12px;
+    -fx-text-fill: #7D8478;
+}
+
+/* ---------------- chips de estado (leyenda y detalle) ---------------- */
+
+.chip {
+    -fx-background-radius: 10;
+    -fx-padding: 3 10 3 10;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.chip.estado-preparado { -fx-background-color: #E4F0E6; -fx-text-fill: #2F6B3E; }
+.chip.estado-ocupado   { -fx-background-color: #E3EBF5; -fx-text-fill: #34557A; }
+.chip.estado-pendiente { -fx-background-color: #FBF1D9; -fx-text-fill: #8A6416; }
+.chip.estado-fuera     { -fx-background-color: #F7E1DC; -fx-text-fill: #8E3B2E; }
+
+/* ---------------- tablero de apartamentos ---------------- */
+
+.scroll,
+.scroll > .viewport {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.tablero {
+    -fx-padding: 4 4 4 4;
+}
+
+.tarjeta {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-width: 0 0 0 6;
+    -fx-padding: 14 16 14 16;
+    -fx-pref-width: 160;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(47, 62, 70, 0.08), 10, 0, 0, 2);
+}
+
+.tarjeta:hover {
+    -fx-effect: dropshadow(gaussian, rgba(47, 62, 70, 0.20), 14, 0, 0, 4);
+}
+
+.tarjeta.estado-preparado { -fx-border-color: transparent transparent transparent #7FB08A; }
+.tarjeta.estado-ocupado   { -fx-border-color: transparent transparent transparent #6E8FB5; }
+.tarjeta.estado-pendiente { -fx-border-color: transparent transparent transparent #E2B65A; }
+.tarjeta.estado-fuera     { -fx-border-color: transparent transparent transparent #C9705F; }
+
+.tarjeta-codigo {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.tarjeta-nombre {
+    -fx-text-fill: #52796F;
+}
+
+.tarjeta-estado {
+    -fx-background-radius: 10;
+    -fx-padding: 2 8 2 8;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.estado-preparado .tarjeta-estado { -fx-background-color: #E4F0E6; -fx-text-fill: #2F6B3E; }
+.estado-ocupado .tarjeta-estado   { -fx-background-color: #E3EBF5; -fx-text-fill: #34557A; }
+.estado-pendiente .tarjeta-estado { -fx-background-color: #FBF1D9; -fx-text-fill: #8A6416; }
+.estado-fuera .tarjeta-estado     { -fx-background-color: #F7E1DC; -fx-text-fill: #8E3B2E; }
+
+/* ---------------- panel del detalle ---------------- */
+
+.detalle {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 16;
+    -fx-padding: 18;
+    -fx-effect: dropshadow(gaussian, rgba(47, 62, 70, 0.10), 12, 0, 0, 3);
+}
+
+.detalle-codigo {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+.detalle-nombre {
+    -fx-font-size: 15px;
+    -fx-text-fill: #52796F;
+}
+
+.seccion {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #9A9F94;
+    -fx-padding: 6 0 0 0;
+}
+
+.linea {
+    -fx-min-height: 1;
+    -fx-max-height: 1;
+    -fx-background-color: #ECE7DF;
+}
+
+.motivo {
+    -fx-background-color: #F7E1DC;
+    -fx-text-fill: #8E3B2E;
+    -fx-background-radius: 8;
+    -fx-padding: 8;
+}
+
+.boton-cerrar {
+    -fx-background-color: transparent;
+    -fx-text-fill: #7D8478;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+}
+
+.boton-cerrar:hover {
+    -fx-text-fill: #2F3E46;
+}

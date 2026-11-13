@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane styleClass="pantalla" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.proyectofinal.gui.PanelInicio">
+   <top>
+      <VBox spacing="14.0">
+         <children>
+            <VBox spacing="2.0">
+               <children>
+                  <Label styleClass="titulo-pantalla" text="Tablero de apartamentos" />
+                  <Label styleClass="texto-suave" text="Haz clic en un apartamento para ver su detalle" />
+               </children>
+            </VBox>
+            <HBox spacing="12.0">
+               <children>
+                  <VBox styleClass="resumen">
+                     <children>
+                        <Label fx:id="etiquetaTotal" styleClass="resumen-numero" text="0" />
+                        <Label styleClass="resumen-texto" text="Apartamentos" />
+                     </children>
+                  </VBox>
+                  <VBox styleClass="resumen,resumen-preparado">
+                     <children>
+                        <Label fx:id="etiquetaPreparados" styleClass="resumen-numero" text="0" />
+                        <Label styleClass="resumen-texto" text="Preparados" />
+                     </children>
+                  </VBox>
+                  <VBox styleClass="resumen,resumen-ocupado">
+                     <children>
+                        <Label fx:id="etiquetaOcupados" styleClass="resumen-numero" text="0" />
+                        <Label styleClass="resumen-texto" text="Ocupados" />
+                     </children>
+                  </VBox>
+                  <VBox styleClass="resumen,resumen-pendiente">
+                     <children>
+                        <Label fx:id="etiquetaPendientes" styleClass="resumen-numero" text="0" />
+                        <Label styleClass="resumen-texto" text="Pendientes o en preparacion" />
+                     </children>
+                  </VBox>
+                  <VBox styleClass="resumen,resumen-fuera">
+                     <children>
+                        <Label fx:id="etiquetaFuera" styleClass="resumen-numero" text="0" />
+                        <Label styleClass="resumen-texto" text="Fuera de servicio" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="8.0">
+               <children>
+                  <Label styleClass="texto-suave" text="Colores:" />
+                  <Label styleClass="chip,estado-preparado" text="Preparado" />
+                  <Label styleClass="chip,estado-ocupado" text="Ocupado" />
+                  <Label styleClass="chip,estado-pendiente" text="Pendiente o en preparacion" />
+                  <Label styleClass="chip,estado-fuera" text="Fuera de servicio" />
+               </children>
+            </HBox>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="16.0" />
+         </BorderPane.margin>
+      </VBox>
+   </top>
+   <center>
+      <ScrollPane fitToWidth="true" styleClass="scroll">
+         <content>
+            <FlowPane fx:id="tablero" hgap="14.0" vgap="14.0" styleClass="tablero" />
+         </content>
+      </ScrollPane>
+   </center>
+   <right>
+      <VBox fx:id="panelDetalle" prefWidth="290.0" spacing="8.0" styleClass="detalle">
+         <children>
+            <HBox alignment="CENTER_LEFT">
+               <children>
+                  <Label fx:id="detalleCodigo" styleClass="detalle-codigo" />
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Button mnemonicParsing="false" onAction="#cerrarDetalle" styleClass="boton-cerrar" text="x" />
+               </children>
+            </HBox>
+            <Label fx:id="detalleNombre" styleClass="detalle-nombre" />
+            <Label fx:id="detalleEstado" styleClass="chip" />
+            <Region styleClass="linea" />
+            <Label styleClass="seccion" text="Ubicacion" />
+            <Label fx:id="detalleUbicacion" />
+            <Label styleClass="seccion" text="Capacidad" />
+            <Label fx:id="detalleCapacidad" wrapText="true" />
+            <Label styleClass="seccion" text="Tarifas por noche" />
+            <Label fx:id="detalleTarifas" wrapText="true" />
+            <Label styleClass="seccion" text="Caracteristicas" />
+            <Label fx:id="detalleCaracteristicas" wrapText="true" />
+            <Label styleClass="seccion" text="Reservas" />
+            <Label fx:id="detalleReservas" />
+            <Label fx:id="detalleMotivo" maxWidth="1.7976931348623157E308" styleClass="motivo" wrapText="true" />
+         </children>
+         <BorderPane.margin>
+            <Insets left="16.0" />
+         </BorderPane.margin>
+      </VBox>
+   </right>
+</BorderPane>
