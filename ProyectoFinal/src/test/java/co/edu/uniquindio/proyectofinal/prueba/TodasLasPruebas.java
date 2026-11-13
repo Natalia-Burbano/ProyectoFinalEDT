@@ -33,7 +33,10 @@ public class TodasLasPruebas {
         PruebaAsignadorGrupos.ejecutar();
         PruebaTurnosYEmpleados.ejecutar();
 
-        // Etapa 4: se agregan al cerrar la etapa
+        // Etapa 4: integracion
+        PruebaSistema.ejecutar();
+        PruebaCargadorEscenario.ejecutar();
+        PruebaReportes.ejecutar();
 
         Prueba.resumen();
     }

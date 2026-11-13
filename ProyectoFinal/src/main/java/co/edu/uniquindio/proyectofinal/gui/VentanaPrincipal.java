@@ -1,10 +1,9 @@
 package co.edu.uniquindio.proyectofinal.gui;
 
 import co.edu.uniquindio.proyectofinal.app.App;
+import co.edu.uniquindio.proyectofinal.datos.CargadorEscenario;
 import co.edu.uniquindio.proyectofinal.estructuras.ListaDoble;
 import co.edu.uniquindio.proyectofinal.estructuras.Pila;
-import co.edu.uniquindio.proyectofinal.modelo.Apartamento;
-import co.edu.uniquindio.proyectofinal.modelo.EstadoApartamento;
 import co.edu.uniquindio.proyectofinal.servicio.SistemaAlojamiento;
 import co.edu.uniquindio.proyectofinal.util.Reloj;
 import javafx.fxml.FXML;
@@ -127,8 +126,8 @@ public class VentanaPrincipal {
             return;
         }
         try {
-            // TEMPORAL: cuando Gabriel suba el CargadorEscenario, esta linea se cambia por la de su cargador
-            cargarDatosTemporales();
+            // el cargador lee el escenario.txt de resources y deja el Reloj en la fecha de la demo
+            CargadorEscenario.cargarDesdeRecursos(sistema);
             refrescarTodo();
             mostrarMensaje("Escenario de prueba cargado: " + sistema.apartamentos().tamanio() + " apartamentos");
         } catch (RuntimeException e) {
@@ -272,39 +271,6 @@ public class VentanaPrincipal {
 
     private void actualizarFecha() {
         etiquetaFecha.setText(Reloj.ahora().format(DateTimeFormatter.ofPattern("dd/MM/yyyy  HH:mm")));
-    }
-
-    /**
-     * TEMPORAL: unos apartamentos de ejemplo para ver el tablero mientras llega el cargador de Gabriel.
-     * Cuando este el CargadorEscenario se borra este metodo.
-     */
-    private void cargarDatosTemporales() {
-        sistema.registrarApartamento(apartamento("A101", "Cafetal", "A", 1, 1, 2, 60000));
-        sistema.registrarApartamento(apartamento("A102", "Guadua", "A", 1, 2, 4, 65000));
-        sistema.registrarApartamento(apartamento("A201", "Palma de Cera", "A", 2, 2, 4, 70000));
-        sistema.registrarApartamento(apartamento("A202", "Carriel", "A", 2, 3, 6, 75000));
-        sistema.registrarApartamento(apartamento("B101", "Colibri", "B", 1, 1, 2, 60000));
-        sistema.registrarApartamento(apartamento("B102", "Orquidea", "B", 1, 2, 3, 65000));
-
-        // cambiar algunos estados para que se vean todos los colores
-        sistema.buscarApartamento("A102").cambiarEstado(EstadoApartamento.OCUPADO);
-        Apartamento a201 = sistema.buscarApartamento("A201");
-        a201.cambiarEstado(EstadoApartamento.OCUPADO);
-        a201.cambiarEstado(EstadoApartamento.PENDIENTE_PREPARACION);
-        Apartamento a202 = sistema.buscarApartamento("A202");
-        a202.cambiarEstado(EstadoApartamento.OCUPADO);
-        a202.cambiarEstado(EstadoApartamento.PENDIENTE_PREPARACION);
-        a202.cambiarEstado(EstadoApartamento.EN_PREPARACION);
-        sistema.ponerFueraDeServicio("B101", "Arreglo de la tuberia del bano");
-    }
-
-    private Apartamento apartamento(String codigo, String nombre, String bloque, int piso,
-                                    int dormitorios, int capacidad, long tarifaBaja) {
-        ListaDoble<String> caracteristicas = new ListaDoble<>();
-        caracteristicas.agregarAlFinal("Wifi");
-        caracteristicas.agregarAlFinal("Cocina");
-        return new Apartamento(codigo, nombre, bloque, piso, dormitorios, capacidad, caracteristicas,
-                tarifaBaja, tarifaBaja + 12000, tarifaBaja + 30000);
     }
 
     /**

@@ -22,7 +22,8 @@ public class SolicitudExterna {
     private final LocalDateTime recibidaEn;
 
     /**
-     * Crea la solicitud. Todos los datos son obligatorios menos la hora de llegada.
+     * Crea la solicitud. Todos los datos son obligatorios menos la hora de llegada
+     * y los acompanantes (si viene solo el titular, la lista queda vacia).
      */
     public SolicitudExterna(String plataforma, String documentoHuesped, String codigoApartamento,
                             LocalDate entrada, LocalDate salida, ListaDoble<Ocupante> ocupantes,
@@ -34,15 +35,13 @@ public class SolicitudExterna {
         if (entrada == null || salida == null || recibidaEn == null) {
             throw new IllegalArgumentException("Las fechas de la solicitud son obligatorias");
         }
-        if (ocupantes == null || ocupantes.estaVacia()) {
-            throw new IllegalArgumentException("La solicitud necesita al menos un ocupante");
-        }
         this.plataforma = plataforma;
         this.documentoHuesped = documentoHuesped;
         this.codigoApartamento = codigoApartamento;
         this.entrada = entrada;
         this.salida = salida;
-        this.ocupantes = ocupantes;
+        // son los acompanantes: el titular lo agrega el sistema solo, asi que la lista puede venir vacia
+        this.ocupantes = ocupantes == null ? new ListaDoble<>() : ocupantes;
         this.horaLlegada = horaLlegada;
         this.recibidaEn = recibidaEn;
     }
