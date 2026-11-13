@@ -62,7 +62,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                co.edu.uniquindio.proyectofinal/co.edu.uniquindio.proyectofinal.Launcher
+                                proyectofinal/co.edu.uniquindio.proyectofinal.app.App
                             </mainClass>
                         </configuration>
                     </execution>
