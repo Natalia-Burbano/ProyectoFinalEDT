@@ -126,9 +126,9 @@ public class PanelInicio implements Pantalla {
         detalleEstado.getStyleClass().setAll("label", "chip", claseDelEstado(apto.getEstado()));
         detalleUbicacion.setText("Bloque " + apto.getBloque() + "  -  Piso " + apto.getPiso());
         detalleCapacidad.setText(apto.getDormitorios() + " dormitorios  -  hasta " + apto.getCapacidad() + " personas");
-        detalleTarifas.setText("Baja " + pesos(apto.getTarifaBaja())
-                + "\nMedia " + pesos(apto.getTarifaMedia())
-                + "\nAlta " + pesos(apto.getTarifaAlta()));
+        detalleTarifas.setText("Baja " + Formato.pesos(apto.getTarifaBaja()) + " / persona"
+                + "\nMedia " + Formato.pesos(apto.getTarifaMedia()) + " / persona"
+                + "\nAlta " + Formato.pesos(apto.getTarifaAlta()) + " / persona");
         detalleCaracteristicas.setText(textoCaracteristicas(apto));
         detalleReservas.setText(apto.getReservas().activas().tamanio() + " reservas activas");
 
@@ -171,23 +171,5 @@ public class PanelInicio implements Pantalla {
             texto += c;
         }
         return texto.isEmpty() ? "Sin caracteristicas" : texto;
-    }
-
-    /**
-     * Muestra un valor en pesos con puntos de miles, por ejemplo $ 60.000 / persona.
-     */
-    private String pesos(long valor) {
-        String cifras = String.valueOf(valor);
-        String conPuntos = "";
-        int contador = 0;
-        // se recorre de derecha a izquierda poniendo un punto cada tres cifras
-        for (int i = cifras.length() - 1; i >= 0; i--) {
-            conPuntos = cifras.charAt(i) + conPuntos;
-            contador++;
-            if (contador % 3 == 0 && i > 0) {
-                conPuntos = "." + conPuntos;
-            }
-        }
-        return "$ " + conPuntos + " / persona";
     }
 }
