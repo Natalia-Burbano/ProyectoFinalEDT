@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane styleClass="pantalla" stylesheets="@estilos-paneles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.proyectofinal.gui.PanelEstadisticas">
+   <top>
+      <HBox alignment="BOTTOM_LEFT" spacing="12.0">
+         <children>
+            <VBox spacing="2.0">
+               <children>
+                  <Label styleClass="titulo-pantalla" text="Estadisticas" />
+                  <Label styleClass="texto-suave" text="Cada reporte recorre las estructuras del sistema" />
+               </children>
+            </VBox>
+            <VBox spacing="2.0">
+               <children>
+                  <Label styleClass="seccion" text="Desde" />
+                  <DatePicker fx:id="fechaDesde" prefWidth="140.0" />
+               </children>
+            </VBox>
+            <VBox spacing="2.0">
+               <children>
+                  <Label styleClass="seccion" text="Hasta" />
+                  <DatePicker fx:id="fechaHasta" prefWidth="140.0" />
+               </children>
+            </VBox>
+            <Button mnemonicParsing="false" onAction="#actualizar" styleClass="boton-principal" text="Actualizar" />
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="16.0" />
+         </BorderPane.margin>
+      </HBox>
+   </top>
+   <center>
+      <ScrollPane fitToWidth="true" styleClass="scroll">
+         <content>
+            <VBox spacing="16.0">
+               <children>
+                  <VBox spacing="10.0" styleClass="tarjeta-panel">
+                     <children>
+                        <Label styleClass="subtitulo" text="Ocupacion por apartamento en el periodo (%)" />
+                        <VBox fx:id="graficoOcupacion" spacing="6.0" />
+                     </children>
+                  </VBox>
+                  <FlowPane fx:id="tablasReportes" hgap="16.0" vgap="16.0" />
+               </children>
+               <padding>
+                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>

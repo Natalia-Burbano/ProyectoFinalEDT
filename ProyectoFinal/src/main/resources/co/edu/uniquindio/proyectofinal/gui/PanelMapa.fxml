@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane styleClass="pantalla" stylesheets="@estilos-paneles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.proyectofinal.gui.PanelMapa">
+   <top>
+      <VBox spacing="10.0">
+         <children>
+            <VBox spacing="2.0">
+               <children>
+                  <Label styleClass="titulo-pantalla" text="Mapa del edificio" />
+                  <Label styleClass="texto-suave" text="Cada punto es un nodo del grafo y cada linea es un pasillo con sus metros. Haz clic en un apartamento para ver sus datos." />
+               </children>
+            </VBox>
+            <HBox alignment="CENTER_LEFT" spacing="8.0">
+               <children>
+                  <Label styleClass="chip,estado-preparado" text="Preparado" />
+                  <Label styleClass="chip,estado-ocupado" text="Ocupado" />
+                  <Label styleClass="chip,estado-pendiente" text="Pendiente o en preparacion" />
+                  <Label styleClass="chip,estado-fuera" text="Fuera de servicio" />
+                  <Label styleClass="chip,chip-servicio" text="Recepcion, escaleras y aseo" />
+                  <Label styleClass="chip,chip-cerrado" text="- - -  Pasillo cerrado" />
+               </children>
+            </HBox>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="14.0" />
+         </BorderPane.margin>
+      </VBox>
+   </top>
+   <center>
+      <ScrollPane styleClass="scroll">
+         <content>
+            <Pane fx:id="lienzo" prefHeight="580.0" prefWidth="960.0" styleClass="lienzo-mapa" />
+         </content>
+      </ScrollPane>
+   </center>
+   <right>
+      <ScrollPane fitToWidth="true" prefWidth="320.0" styleClass="scroll">
+         <content>
+            <VBox spacing="14.0">
+               <children>
+                  <VBox spacing="8.0" styleClass="tarjeta-panel">
+                     <children>
+                        <Label styleClass="subtitulo" text="Ruta mas corta (Dijkstra)" />
+                        <Label styleClass="seccion" text="Origen" />
+                        <ComboBox fx:id="comboOrigen" maxWidth="1.7976931348623157E308" promptText="Escoge el origen" />
+                        <Label styleClass="seccion" text="Destino" />
+                        <ComboBox fx:id="comboDestino" maxWidth="1.7976931348623157E308" promptText="Escoge el destino" />
+                        <HBox spacing="8.0">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#calcularRuta" styleClass="boton-principal" text="Calcular ruta" />
+                              <Button mnemonicParsing="false" onAction="#calcularRutaPreparacion" styleClass="boton-secundario" text="Ruta de preparacion" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <VBox spacing="8.0" styleClass="tarjeta-panel">
+                     <children>
+                        <Label styleClass="subtitulo" text="Pasillos" />
+                        <ComboBox fx:id="comboPasillo" maxWidth="1.7976931348623157E308" promptText="Escoge un pasillo" />
+                        <HBox spacing="8.0">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#cerrarPasillo" styleClass="boton-secundario" text="Cerrar" />
+                              <Button mnemonicParsing="false" onAction="#abrirPasillo" styleClass="boton-secundario" text="Abrir" />
+                           </children>
+                        </HBox>
+                        <Label fx:id="etiquetaConexo" styleClass="texto-suave" wrapText="true" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="8.0" styleClass="tarjeta-panel">
+                     <children>
+                        <Label styleClass="subtitulo" text="Recorridos desde el origen" />
+                        <HBox spacing="8.0">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#recorrerBFS" styleClass="boton-secundario" text="BFS" />
+                              <Button mnemonicParsing="false" onAction="#recorrerDFS" styleClass="boton-secundario" text="DFS" />
+                              <Button mnemonicParsing="false" onAction="#agruparPorBloque" styleClass="boton-secundario" text="Agrupar por bloque" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <VBox spacing="8.0" styleClass="tarjeta-panel">
+                     <children>
+                        <Label styleClass="subtitulo" text="Resultado" />
+                        <Label fx:id="etiquetaResultado" styleClass="resultado" wrapText="true" />
+                        <Button mnemonicParsing="false" onAction="#limpiar" styleClass="boton-secundario" text="Limpiar el mapa" />
+                     </children>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+               </padding>
+            </VBox>
+         </content>
+         <BorderPane.margin>
+            <Insets left="14.0" />
+         </BorderPane.margin>
+      </ScrollPane>
+   </right>
+</BorderPane>

@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane styleClass="pantalla" stylesheets="@estilos-paneles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.proyectofinal.gui.PanelAdministracion">
+   <top>
+      <VBox spacing="2.0">
+         <children>
+            <Label styleClass="titulo-pantalla" text="Administracion" />
+            <Label styleClass="texto-suave" text="Empleados, apartamentos y huespedes se guardan en arboles binarios de busqueda" />
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="10.0" />
+         </BorderPane.margin>
+      </VBox>
+   </top>
+   <center>
+      <TabPane styleClass="pestanas" tabClosingPolicy="UNAVAILABLE">
+         <tabs>
+            <Tab closable="false" text="Empleados">
+               <content>
+                  <ScrollPane fitToWidth="true" styleClass="scroll">
+                     <content>
+                        <HBox spacing="16.0">
+                           <children>
+                              <VBox spacing="8.0" styleClass="tarjeta-panel" prefWidth="300.0">
+                                 <children>
+                                    <Label styleClass="subtitulo" text="Agregar" />
+                                    <TextField fx:id="empDocumento" promptText="Documento" styleClass="campo" />
+                                    <TextField fx:id="empNombre" promptText="Nombre" styleClass="campo" />
+                                    <ComboBox fx:id="empRol" maxWidth="1.7976931348623157E308" promptText="Rol" />
+                                    <TextField fx:id="empTelefono" promptText="Telefono" styleClass="campo" />
+                                    <Button mnemonicParsing="false" onAction="#agregarEmpleado" styleClass="boton-principal" text="Agregar empleado" />
+                                 </children>
+                              </VBox>
+                              <VBox spacing="8.0" styleClass="tarjeta-panel" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label styleClass="subtitulo" text="Buscar o eliminar" />
+                                    <TextField fx:id="empBuscar" promptText="Documento del empleado" styleClass="campo" />
+                                    <HBox spacing="8.0">
+                                       <children>
+                                          <Button mnemonicParsing="false" onAction="#buscarEmpleado" styleClass="boton-secundario" text="Buscar" />
+                                          <Button mnemonicParsing="false" onAction="#eliminarEmpleado" styleClass="boton-secundario" text="Eliminar" />
+                                       </children>
+                                    </HBox>
+                                    <Label styleClass="subtitulo" text="Arbol binario de busqueda" />
+                                    <Label fx:id="empArbol" styleClass="texto-suave" />
+                                    <Button mnemonicParsing="false" onAction="#verRecorridosEmpleados" styleClass="boton-secundario" text="Ver recorridos inorden, preorden y postorden" />
+                                    <Label fx:id="empRecorridos" styleClass="resultado" wrapText="true" />
+                                    <Label styleClass="seccion" text="Todos (inorden, ordenados por documento)" />
+                                    <ScrollPane fitToWidth="true" prefHeight="220.0" styleClass="scroll">
+                                       <content>
+                                          <VBox fx:id="empListado" spacing="2.0" />
+                                       </content>
+                                    </ScrollPane>
+                                 </children>
+                              </VBox>
+                           </children>
+                           <padding>
+                              <Insets bottom="14.0" left="4.0" right="4.0" top="14.0" />
+                           </padding>
+                        </HBox>
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+            <Tab closable="false" text="Apartamentos">
+               <content>
+                  <ScrollPane fitToWidth="true" styleClass="scroll">
+                     <content>
+                        <HBox spacing="16.0">
+                           <children>
+                              <VBox spacing="8.0" styleClass="tarjeta-panel" prefWidth="300.0">
+                                 <children>
+                                    <Label styleClass="subtitulo" text="Agregar" />
+                                    <TextField fx:id="aptCodigo" promptText="Codigo, por ejemplo C101" styleClass="campo" />
+                                    <TextField fx:id="aptNombre" promptText="Nombre" styleClass="campo" />
+                                    <HBox spacing="8.0">
+                                       <children>
+                                          <TextField fx:id="aptBloque" promptText="Bloque" styleClass="campo" />
+                                          <TextField fx:id="aptPiso" promptText="Piso" styleClass="campo" />
+                                       </children>
+                                    </HBox>
+                                    <HBox spacing="8.0">
+                                       <children>
+                                          <TextField fx:id="aptDormitorios" promptText="Dormitorios" styleClass="campo" />
+                                          <TextField fx:id="aptCapacidad" promptText="Capacidad" styleClass="campo" />
+                                       </children>
+                                    </HBox>
+                                    <TextField fx:id="aptCaracteristicas" promptText="Caracteristicas separadas por coma" styleClass="campo" />
+                                    <Label styleClass="seccion" text="Tarifa por persona por noche" />
+                                    <HBox spacing="8.0">
+                                       <children>
+                                          <TextField fx:id="aptTarifaBaja" promptText="Baja" styleClass="campo" />
+                                          <TextField fx:id="aptTarifaMedia" promptText="Media" styleClass="campo" />
+                                          <TextField fx:id="aptTarifaAlta" promptText="Alta" styleClass="campo" />
+                                       </children>
+                                    </HBox>
+                                    <Button mnemonicParsing="false" onAction="#agregarApartamento" styleClass="boton-principal" text="Agregar apartamento" />
+                                 </children>
+                              </VBox>
+                              <VBox spacing="8.0" styleClass="tarjeta-panel" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label styleClass="subtitulo" text="Buscar o eliminar" />
+                                    <TextField fx:id="aptBuscar" promptText="Codigo del apartamento" styleClass="campo" />
+                                    <HBox spacing="8.0">
+                                       <children>
+                                          <Button mnemonicParsing="false" onAction="#buscarApartamento" styleClass="boton-secundario" text="Buscar" />
+                                          <Button mnemonicParsing="false" onAction="#eliminarApartamento" styleClass="boton-secundario" text="Eliminar" />
+                                       </children>
+                                    </HBox>
+                                    <TextField fx:id="aptMotivo" promptText="Motivo (para dejarlo fuera de servicio)" styleClass="campo" />
+                                    <HBox spacing="8.0">
+                                       <children>
+                                          <Button mnemonicParsing="false" onAction="#ponerFueraDeServicio" styleClass="boton-secundario" text="Fuera de servicio" />
+                                          <Button mnemonicParsing="false" onAction="#reactivarApartamento" styleClass="boton-secundario" text="Reactivar" />
+                                       </children>
+                                    </HBox>
+                                    <Label styleClass="subtitulo" text="Arbol binario de busqueda" />
+                                    <Label fx:id="aptArbol" styleClass="texto-suave" />
+                                    <Button mnemonicParsing="false" onAction="#verRecorridosApartamentos" styleClass="boton-secundario" text="Ver recorridos inorden, preorden y postorden" />
+                                    <Label fx:id="aptRecorridos" styleClass="resultado" wrapText="true" />
+                                    <Label styleClass="seccion" text="Todos (inorden, ordenados por codigo)" />
+                                    <ScrollPane fitToWidth="true" prefHeight="220.0" styleClass="scroll">
+                                       <content>
+                                          <VBox fx:id="aptListado" spacing="2.0" />
+                                       </content>
+                                    </ScrollPane>
+                                 </children>
+                              </VBox>
+                           </children>
+                           <padding>
+                              <Insets bottom="14.0" left="4.0" right="4.0" top="14.0" />
+                           </padding>
+                        </HBox>
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+            <Tab closable="false" text="Huespedes">
+               <content>
+                  <ScrollPane fitToWidth="true" styleClass="scroll">
+                     <content>
+                        <HBox spacing="16.0">
+                           <children>
+                              <VBox spacing="8.0" styleClass="tarjeta-panel" prefWidth="300.0">
+                                 <children>
+                                    <Label styleClass="subtitulo" text="Agregar" />
+                                    <TextField fx:id="hueDocumento" promptText="Documento" styleClass="campo" />
+                                    <TextField fx:id="hueNombre" promptText="Nombre" styleClass="campo" />
+                                    <DatePicker fx:id="hueNacimiento" maxWidth="1.7976931348623157E308" promptText="Fecha de nacimiento" />
+                                    <TextField fx:id="hueTelefono" promptText="Telefono" styleClass="campo" />
+                                    <TextField fx:id="hueCorreo" promptText="Correo" styleClass="campo" />
+                                    <Button mnemonicParsing="false" onAction="#agregarHuesped" styleClass="boton-principal" text="Agregar huesped" />
+                                 </children>
+                              </VBox>
+                              <VBox spacing="8.0" styleClass="tarjeta-panel" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label styleClass="subtitulo" text="Buscar o eliminar" />
+                                    <TextField fx:id="hueBuscar" promptText="Documento del huesped" styleClass="campo" />
+                                    <HBox spacing="8.0">
+                                       <children>
+                                          <Button mnemonicParsing="false" onAction="#buscarHuesped" styleClass="boton-secundario" text="Buscar" />
+                                          <Button mnemonicParsing="false" onAction="#eliminarHuesped" styleClass="boton-secundario" text="Eliminar" />
+                                       </children>
+                                    </HBox>
+                                    <Label styleClass="subtitulo" text="Arbol binario de busqueda" />
+                                    <Label fx:id="hueArbol" styleClass="texto-suave" />
+                                    <Button mnemonicParsing="false" onAction="#verRecorridosHuespedes" styleClass="boton-secundario" text="Ver recorridos inorden, preorden y postorden" />
+                                    <Label fx:id="hueRecorridos" styleClass="resultado" wrapText="true" />
+                                    <Label styleClass="seccion" text="Todos (inorden, ordenados por documento)" />
+                                    <ScrollPane fitToWidth="true" prefHeight="220.0" styleClass="scroll">
+                                       <content>
+                                          <VBox fx:id="hueListado" spacing="2.0" />
+                                       </content>
+                                    </ScrollPane>
+                                 </children>
+                              </VBox>
+                           </children>
+                           <padding>
+                              <Insets bottom="14.0" left="4.0" right="4.0" top="14.0" />
+                           </padding>
+                        </HBox>
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+            <Tab closable="false" text="Temporadas y tarifas">
+               <content>
+                  <ScrollPane fitToWidth="true" styleClass="scroll">
+                     <content>
+                        <HBox spacing="16.0">
+                           <children>
+                              <VBox spacing="8.0" styleClass="tarjeta-panel" prefWidth="460.0">
+                                 <children>
+                                    <Label styleClass="subtitulo" text="Periodos de temporada" />
+                                    <Label styleClass="texto-suave" text="Una noche que no cae en ningun periodo es temporada BAJA" />
+                                    <ComboBox fx:id="tempTipo" maxWidth="1.7976931348623157E308" promptText="Temporada" />
+                                    <DatePicker fx:id="tempDesde" maxWidth="1.7976931348623157E308" promptText="Desde" />
+                                    <DatePicker fx:id="tempHasta" maxWidth="1.7976931348623157E308" promptText="Hasta" />
+                                    <Button mnemonicParsing="false" onAction="#definirTemporada" styleClass="boton-principal" text="Definir periodo" />
+                                    <Label styleClass="seccion" text="Periodos definidos" />
+                                    <VBox fx:id="tempListado" spacing="2.0" />
+                                 </children>
+                              </VBox>
+                              <VBox spacing="8.0" styleClass="tarjeta-panel" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label styleClass="subtitulo" text="Tarifas" />
+                                    <ComboBox fx:id="tarApartamento" maxWidth="1.7976931348623157E308" promptText="Apartamento" />
+                                    <Label fx:id="tarActuales" styleClass="texto-suave" wrapText="true" />
+                                    <ComboBox fx:id="tarTemporada" maxWidth="1.7976931348623157E308" promptText="Temporada" />
+                                    <TextField fx:id="tarValor" promptText="Nueva tarifa por persona por noche" styleClass="campo" />
+                                    <Button mnemonicParsing="false" onAction="#cambiarTarifa" styleClass="boton-principal" text="Cambiar tarifa" />
+                                 </children>
+                              </VBox>
+                           </children>
+                           <padding>
+                              <Insets bottom="14.0" left="4.0" right="4.0" top="14.0" />
+                           </padding>
+                        </HBox>
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+         </tabs>
+      </TabPane>
+   </center>
+</BorderPane>
