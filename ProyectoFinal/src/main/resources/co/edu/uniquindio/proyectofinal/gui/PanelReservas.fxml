@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<TabPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+         fx:controller="co.edu.uniquindio.proyectofinal.gui.PanelReservas" tabClosingPolicy="UNAVAILABLE">
+    <tabs>
+
+        <Tab text="Disponibilidad y reserva">
+            <content>
+                <VBox spacing="8">
+                    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Entrada"/>
+                        <DatePicker fx:id="dpEntrada" prefWidth="130"/>
+                        <Label text="Salida"/>
+                        <DatePicker fx:id="dpSalida" prefWidth="130"/>
+                        <Label text="Personas"/>
+                        <TextField fx:id="tfPersonas" prefWidth="50"/>
+                        <Label text="Ordenar por"/>
+                        <ComboBox fx:id="cbOrden" prefWidth="150"/>
+                        <Button text="Buscar disponibilidad" onAction="#buscarDisponibles"/>
+                    </HBox>
+                    <TableView fx:id="tablaDisponibles" prefHeight="190">
+                        <columns>
+                            <TableColumn fx:id="colDCodigo" text="Codigo" prefWidth="70"/>
+                            <TableColumn fx:id="colDNombre" text="Nombre" prefWidth="160"/>
+                            <TableColumn fx:id="colDBloque" text="Bloque" prefWidth="60"/>
+                            <TableColumn fx:id="colDPiso" text="Piso" prefWidth="50"/>
+                            <TableColumn fx:id="colDDorm" text="Dormitorios" prefWidth="90"/>
+                            <TableColumn fx:id="colDCap" text="Capacidad" prefWidth="80"/>
+                            <TableColumn fx:id="colDTarifa" text="Tarifa baja p/p/noche" prefWidth="150"/>
+                        </columns>
+                    </TableView>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Documento del titular"/>
+                        <TextField fx:id="tfDocumento" prefWidth="120"/>
+                        <Label text="Hora de llegada"/>
+                        <TextField fx:id="tfHoraLlegada" promptText="15:00" prefWidth="70"/>
+                        <Label text="Canal"/>
+                        <ComboBox fx:id="cbCanal" prefWidth="100"/>
+                    </HBox>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Otros ocupantes:"/>
+                        <TextField fx:id="tfOcNombre" promptText="Nombre" prefWidth="150"/>
+                        <DatePicker fx:id="dpOcNacimiento" promptText="Nacimiento" prefWidth="130"/>
+                        <Button text="Agregar" onAction="#agregarOcupante"/>
+                        <Button text="Quitar seleccionado" onAction="#quitarOcupante"/>
+                    </HBox>
+                    <TableView fx:id="tablaOcupantes" prefHeight="90">
+                        <columns>
+                            <TableColumn fx:id="colONombre" text="Nombre" prefWidth="200"/>
+                            <TableColumn fx:id="colONacimiento" text="Nacimiento" prefWidth="120"/>
+                        </columns>
+                    </TableView>
+                    <HBox spacing="8">
+                        <Button text="Cotizar" onAction="#cotizar"/>
+                        <Button text="Crear reserva" onAction="#reservar"/>
+                    </HBox>
+                    <TextArea fx:id="taCotizacion" editable="false" prefRowCount="6" promptText="Aqui sale la cotizacion noche por noche"/>
+                </VBox>
+            </content>
+        </Tab>
+
+        <Tab text="Reservas">
+            <content>
+                <VBox spacing="8">
+                    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Documento del huesped"/>
+                        <TextField fx:id="tfFiltroDocumento" promptText="(vacio = todas)" prefWidth="150"/>
+                        <Button text="Ver reservas" onAction="#cargarReservas"/>
+                    </HBox>
+                    <TableView fx:id="tablaReservas" prefHeight="260">
+                        <columns>
+                            <TableColumn fx:id="colRCodigo" text="Codigo" prefWidth="70"/>
+                            <TableColumn fx:id="colRHuesped" text="Titular" prefWidth="140"/>
+                            <TableColumn fx:id="colRApto" text="Apto" prefWidth="60"/>
+                            <TableColumn fx:id="colREntrada" text="Entrada" prefWidth="90"/>
+                            <TableColumn fx:id="colRSalida" text="Salida" prefWidth="90"/>
+                            <TableColumn fx:id="colREstado" text="Estado" prefWidth="90"/>
+                            <TableColumn fx:id="colRCanal" text="Canal" prefWidth="80"/>
+                            <TableColumn fx:id="colRTotal" text="Total" prefWidth="100"/>
+                            <TableColumn fx:id="colRSaldo" text="Saldo" prefWidth="100"/>
+                        </columns>
+                    </TableView>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <TextField fx:id="tfAnticipo" promptText="Valor (vacio = el 30 %)" prefWidth="170"/>
+                        <Button text="Pagar anticipo y confirmar" onAction="#pagarAnticipo"/>
+                        <Button text="Ver devolucion" onAction="#verDevolucion"/>
+                        <Button text="Cancelar reserva" onAction="#cancelar"/>
+                    </HBox>
+                    <Label fx:id="lblMensaje"/>
+                </VBox>
+            </content>
+        </Tab>
+
+        <Tab text="Grupos grandes">
+            <content>
+                <VBox spacing="8">
+                    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Entrada"/>
+                        <DatePicker fx:id="dpGrupoEntrada" prefWidth="130"/>
+                        <Label text="Salida"/>
+                        <DatePicker fx:id="dpGrupoSalida" prefWidth="130"/>
+                        <Label text="Personas"/>
+                        <TextField fx:id="tfGrupoPersonas" prefWidth="60"/>
+                        <Button text="Buscar la mejor combinacion" onAction="#asignarGrupo"/>
+                    </HBox>
+                    <TextArea fx:id="taGrupo" editable="false" prefRowCount="10" promptText="Aqui sale la combinacion con menos apartamentos"/>
+                </VBox>
+            </content>
+        </Tab>
+
+        <Tab text="Canal externo">
+            <content>
+                <VBox spacing="8">
+                    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Simular solicitud:"/>
+                        <TextField fx:id="tfExtDocumento" promptText="Documento" prefWidth="100"/>
+                        <TextField fx:id="tfExtApto" promptText="Apto" prefWidth="70"/>
+                        <DatePicker fx:id="dpExtEntrada" promptText="Entrada" prefWidth="120"/>
+                        <DatePicker fx:id="dpExtSalida" promptText="Salida" prefWidth="120"/>
+                        <Button text="Enviar a la cola" onAction="#simularSolicitud"/>
+                    </HBox>
+                    <Label text="Solicitudes pendientes (en orden de llegada)"/>
+                    <TableView fx:id="tablaSolicitudes" prefHeight="140">
+                        <columns>
+                            <TableColumn fx:id="colSPlataforma" text="Plataforma" prefWidth="140"/>
+                            <TableColumn fx:id="colSHuesped" text="Huesped" prefWidth="100"/>
+                            <TableColumn fx:id="colSApto" text="Apto" prefWidth="70"/>
+                            <TableColumn fx:id="colSEntrada" text="Entrada" prefWidth="100"/>
+                            <TableColumn fx:id="colSSalida" text="Salida" prefWidth="100"/>
+                        </columns>
+                    </TableView>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Button text="Procesar siguiente" onAction="#procesarSiguiente"/>
+                        <Label fx:id="lblResultado"/>
+                    </HBox>
+                    <Label text="Conflictos de canal"/>
+                    <TableView fx:id="tablaConflictos" prefHeight="140">
+                        <columns>
+                            <TableColumn fx:id="colCPlataforma" text="Plataforma" prefWidth="140"/>
+                            <TableColumn fx:id="colCApto" text="Apto" prefWidth="70"/>
+                            <TableColumn fx:id="colCMotivo" text="Motivo" prefWidth="320"/>
+                            <TableColumn fx:id="colCFecha" text="Fecha" prefWidth="160"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </content>
+        </Tab>
+
+    </tabs>
+</TabPane>
