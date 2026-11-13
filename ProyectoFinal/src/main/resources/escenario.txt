@@ -1,0 +1,119 @@
+// ============================================================
+// ESCENARIO DE PRUEBA - Aparta-Suites UQ
+// Campos separados por ; | Fechas AAAA-MM-DD | Lineas con // son comentarios
+// Fecha de la demo: 2026-11-20 (el Reloj se fija a esa fecha antes de cargar)
+// En #RESERVAS, "ocupantes" son los acompanantes (nombre:fechaNacimiento separados por |);
+// el titular se agrega solo como ocupante. Si no hay acompanantes el campo queda vacio.
+// ============================================================
+
+#TEMPORADAS
+// temporada;desde;hasta
+MEDIA;2026-06-15;2026-07-15
+BAJA;2026-07-16;2026-12-14
+ALTA;2026-12-15;2027-01-15
+BAJA;2027-01-16;2027-06-14
+MEDIA;2027-06-15;2027-07-15
+
+#APARTAMENTOS
+// codigo;nombre;bloque;piso;dormitorios;capacidad;caracteristicas;tarifaBaja;tarifaMedia;tarifaAlta
+A101;Cafetal;A;1;1;2;Cocineta,Wifi,Vista al jardin;60000;72000;90000
+A102;Guadua;A;1;2;4;Cocina,Wifi,Parqueadero;65000;78000;98000
+A201;Palma de Cera;A;2;2;4;Cocina,Wifi,Balcon;70000;84000;105000
+A202;Carriel;A;2;3;6;Cocina,Wifi,Terraza;75000;90000;112000
+A301;Mirador;A;3;3;6;Cocina,Wifi,Vista a la montana,Terraza;80000;96000;120000
+A302;Cumbre;A;3;4;8;Cocina,Wifi,Terraza,Jacuzzi;85000;102000;128000
+B101;Colibri;B;1;1;2;Cocineta,Wifi;60000;72000;90000
+B102;Orquidea;B;1;2;3;Cocina,Wifi,Patio;65000;78000;98000
+B201;Samán;B;2;2;4;Cocina,Wifi,Balcon;70000;84000;105000
+B202;Frailejon;B;2;3;5;Cocina,Wifi,Parqueadero;75000;90000;112000
+B301;Cascada;B;3;3;6;Cocina,Wifi,Vista al valle;80000;96000;120000
+B302;Valle;B;3;4;8;Cocina,Wifi,Terraza,Chimenea;90000;108000;135000
+
+#NODOS
+// id;tipo;nombre;bloque;piso;x;y;codigoApartamento
+REC;RECEPCION;Recepcion;A;1;450;500;
+ESC-A;ESCALERA;Escalera A;A;2;250;250;
+ESC-B;ESCALERA;Escalera B;B;2;750;250;
+ASEO-A;ASEO;Aseo A;A;2;250;160;
+ASEO-B;ASEO;Aseo B;B;2;750;160;
+A101;APARTAMENTO;Cafetal;A;1;150;400;A101
+A102;APARTAMENTO;Guadua;A;1;350;400;A102
+A201;APARTAMENTO;Palma de Cera;A;2;150;250;A201
+A202;APARTAMENTO;Carriel;A;2;350;250;A202
+A301;APARTAMENTO;Mirador;A;3;150;100;A301
+A302;APARTAMENTO;Cumbre;A;3;350;100;A302
+B101;APARTAMENTO;Colibri;B;1;650;400;B101
+B102;APARTAMENTO;Orquidea;B;1;850;400;B102
+B201;APARTAMENTO;Saman;B;2;650;250;B201
+B202;APARTAMENTO;Frailejon;B;2;850;250;B202
+B301;APARTAMENTO;Cascada;B;3;650;100;B301
+B302;APARTAMENTO;Valle;B;3;850;100;B302
+
+#PASILLOS
+// idA;idB;metros
+REC;A101;10
+REC;A102;12
+A101;A102;5
+REC;ESC-A;8
+ESC-A;A201;6
+ESC-A;A202;7
+ESC-A;A301;12
+ESC-A;A302;13
+A101;A201;20
+A201;A202;4
+A301;A302;4
+ESC-A;ASEO-A;5
+REC;ESC-B;25
+A102;B101;30
+ESC-B;B101;6
+ESC-B;B102;7
+B101;B102;4
+ESC-B;B201;10
+ESC-B;B202;11
+B201;B202;4
+ESC-B;B301;14
+ESC-B;B302;15
+B301;B302;4
+ESC-B;ASEO-B;5
+
+#HUESPEDES
+// documento;nombre;fechaNacimiento;telefono;correo
+1000000001;Valeria Mora;1992-06-14;3001112233;valeria.mora@example.com
+1000000002;Camilo Rojas;1988-02-11;3002223344;camilo.rojas@example.com
+1000000003;Ana Maria Perez;1985-09-03;3003334455;ana.perez@example.com
+1000000004;Pedro Duarte;1985-01-20;3004445566;pedro.duarte@example.com
+1000000005;Luisa Fernanda Rios;1995-12-08;3005556677;luisa.rios@example.com
+1000000006;Andres Salazar;1990-04-27;3006667788;andres.salazar@example.com
+1000000007;Marta Cecilia Ortiz;1979-07-19;3007778899;marta.ortiz@example.com
+1000000008;Julian Herrera;1998-03-30;3008889900;julian.herrera@example.com
+1000000009;Daniela Cardona;1993-10-05;3009990011;daniela.cardona@example.com
+1000000010;Sebastian Gil;2000-05-22;3010001122;sebastian.gil@example.com
+1000000011;Paula Andrea Vargas;1987-08-16;3011112233;paula.vargas@example.com
+1000000012;Esteban Ramirez;1991-11-02;3012223344;esteban.ramirez@example.com
+
+#EMPLEADOS
+// documento;nombre;rol;telefono
+2000000001;Carolina Londono;RECEPCIONISTA;3101110001
+2000000002;Mauricio Castano;RECEPCIONISTA;3101110002
+2000000003;Natalia Giraldo;RECEPCIONISTA;3101110003
+2000000004;Jairo Quintero;PREPARACION;3101110004
+2000000005;Rosa Elena Murillo;PREPARACION;3101110005
+2000000006;Gustavo Arango;ADMINISTRADOR;3101110006
+
+#RESERVAS
+// documentoTitular;codigoApartamento;entrada;salida;canal;horaLlegada;ocupantes
+// --- Entran el dia de la demo (2026-11-20) ---
+1000000001;A101;2026-11-20;2026-11-22;DIRECTA;15:00;Diego Mora:1990-03-10
+1000000002;A202;2026-11-20;2026-11-23;DIRECTA;11:00;Laura Rojas:1990-09-30|Mateo Rojas:2016-04-02|Sara Rojas:2018-01-15
+// --- Cruza de temporada Baja a Alta (la noche del 15 de diciembre ya es Alta) ---
+1000000003;A302;2026-12-12;2026-12-17;PORTAL;16:00;Juan Perez:1983-02-18|Isabela Perez:2012-06-09|Tomas Perez:2014-11-21|Carmen Perez:1955-05-05
+// --- Con un nino menor de 6 anios (ocupa cupo pero no paga) ---
+1000000004;B102;2026-12-20;2026-12-23;PORTAL;14:00;Sofia Duarte:2022-08-19|Elena Duarte:1986-07-07
+// --- Canal externo ---
+1000000005;A201;2026-12-18;2026-12-21;EXTERNA;13:00;Hugo Rios:1994-01-12|Clara Rios:1996-10-25
+1000000006;B201;2026-12-26;2026-12-29;EXTERNA;17:00;Rita Salazar:1992-09-14
+// --- Otras ---
+1000000007;B302;2026-12-24;2027-01-02;DIRECTA;18:00;Beatriz Ortiz:1980-03-03|Ricardo Ortiz:1978-12-12|Luz Ortiz:2009-04-04|Pablo Ortiz:2011-08-08|Mia Ortiz:2015-02-02|Leo Ortiz:2020-09-09
+1000000008;A301;2026-12-30;2027-01-03;PORTAL;12:00;Karen Herrera:1999-05-17|Oscar Herrera:1997-11-30|Nora Herrera:1968-06-06
+1000000009;B301;2026-11-25;2026-11-28;DIRECTA;10:00;Felipe Cardona:1991-01-09|Gloria Cardona:1962-10-10
+1000000010;A101;2026-11-24;2026-11-26;PORTAL;09:00;
