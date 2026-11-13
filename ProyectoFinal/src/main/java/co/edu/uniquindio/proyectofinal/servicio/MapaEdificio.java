@@ -65,6 +65,16 @@ public class MapaEdificio {
         grafo.abrirArista(exigirNodo(idA), exigirNodo(idB));
     }
 
+    /** Metros del pasillo entre dos puntos, o -1 si no hay pasillo (lo usa el mapa para dibujar). */
+    public double metrosEntre(String idA, String idB) {
+        return grafo.peso(exigirNodo(idA), exigirNodo(idB));
+    }
+
+    /** Dice si el pasillo entre dos puntos esta abierto. */
+    public boolean pasilloAbierto(String idA, String idB) {
+        return grafo.estaAbierta(exigirNodo(idA), exigirNodo(idB));
+    }
+
     // ---------- Dijkstra ----------
 
     /** Ruta mas corta (Dijkstra con arreglos). Si no hay camino devuelve null. */
