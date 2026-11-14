@@ -5,6 +5,7 @@ import co.edu.uniquindio.proyectofinal.estructuras.ListaDoble;
 import co.edu.uniquindio.proyectofinal.modelo.Apartamento;
 import co.edu.uniquindio.proyectofinal.modelo.ConflictoCanal;
 import co.edu.uniquindio.proyectofinal.modelo.Cotizacion;
+import co.edu.uniquindio.proyectofinal.modelo.Huesped;
 import co.edu.uniquindio.proyectofinal.modelo.NocheLiquidada;
 import co.edu.uniquindio.proyectofinal.modelo.Ocupante;
 import co.edu.uniquindio.proyectofinal.modelo.Reserva;
@@ -16,9 +17,12 @@ import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 import java.util.Comparator;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -37,6 +41,10 @@ public class PanelReservas implements Pantalla {
     private SistemaAlojamiento sistema;
     private ListaDoble<Ocupante> ocupantes = new ListaDoble<>();
     private VentanaPrincipal ventana;
+    private boolean modoHuesped = false; // true cuando la pantalla se esta usando con el rol Huesped
+
+    @FXML private TabPane pestanias;
+    @FXML private Tab tabCanalExterno;
 
     // --- disponibilidad y reserva
     @FXML private DatePicker dpEntrada;
@@ -63,6 +71,7 @@ public class PanelReservas implements Pantalla {
 
     // --- reservas
     @FXML private TextField tfFiltroDocumento;
+    @FXML private Button botonVerReservas;
     @FXML private TableView<Reserva> tablaReservas;
     @FXML private TableColumn<Reserva, String> colRCodigo;
     @FXML private TableColumn<Reserva, String> colRHuesped;
@@ -155,10 +164,11 @@ public class PanelReservas implements Pantalla {
         if (sistema == null) {
             return;
         }
-        tablaOcupantes.setItems(AyudaTablas.aObservable(ocupantes));
+        ajustarAlRol();
+        AyudaTablas.llenar(tablaOcupantes, ocupantes);
         cargarReservas();
-        tablaSolicitudes.setItems(AyudaTablas.aObservable(sistema.canalExterno().pendientes()));
-        tablaConflictos.setItems(AyudaTablas.aObservable(sistema.canalExterno().conflictos()));
+        AyudaTablas.llenar(tablaSolicitudes, sistema.canalExterno().pendientes());
+        AyudaTablas.llenar(tablaConflictos, sistema.canalExterno().conflictos());
     }
 
     // ------------------------------------------------------------------ disponibilidad y reserva
@@ -168,7 +178,7 @@ public class PanelReservas implements Pantalla {
         try {
             int personas = leerEntero(tfPersonas.getText(), "personas");
             ListaDoble<Apartamento> libres = sistema.buscarDisponibles(entrada(), salida(), personas, ordenElegido());
-            tablaDisponibles.setItems(AyudaTablas.aObservable(libres));
+            AyudaTablas.llenar(tablaDisponibles, libres);
             lblMensaje.setText(libres.tamanio() + " apartamento(s) disponible(s)");
         } catch (RuntimeException e) {
             AyudaTablas.error(e.getMessage());
@@ -184,7 +194,7 @@ public class PanelReservas implements Pantalla {
             ocupantes.agregarAlFinal(new Ocupante(tfOcNombre.getText(), dpOcNacimiento.getValue()));
             tfOcNombre.clear();
             dpOcNacimiento.setValue(null);
-            tablaOcupantes.setItems(AyudaTablas.aObservable(ocupantes));
+            AyudaTablas.llenar(tablaOcupantes, ocupantes);
         } catch (RuntimeException e) {
             AyudaTablas.error(e.getMessage());
         }
@@ -198,7 +208,7 @@ public class PanelReservas implements Pantalla {
             return;
         }
         ocupantes.eliminar(seleccionado);
-        tablaOcupantes.setItems(AyudaTablas.aObservable(ocupantes));
+        AyudaTablas.llenar(tablaOcupantes, ocupantes);
     }
 
     @FXML
@@ -225,6 +235,7 @@ public class PanelReservas implements Pantalla {
     @FXML
     private void reservar() {
         try {
+            exigirSesionSiEsHuesped();
             String codigo = codigoSeleccionado();
             LocalTime hora = leerHora(tfHoraLlegada.getText());
             Reserva reserva;
@@ -240,7 +251,7 @@ public class PanelReservas implements Pantalla {
             ocupantes = new ListaDoble<>();
             taCotizacion.clear();
             buscarDisponibles();
-            refrescar();
+            ventana.refrescarTodo(); // la reserva nueva se ve tambien en Inicio, Calendario y Huesped
         } catch (RuntimeException e) {
             AyudaTablas.error(e.getMessage());
         }
@@ -254,11 +265,25 @@ public class PanelReservas implements Pantalla {
             return;
         }
         try {
-            String documento = tfFiltroDocumento.getText();
-            ListaDoble<Reserva> lista = (documento == null || documento.isBlank())
-                    ? sistema.todasLasReservas()
-                    : sistema.reservasDe(documento.trim());
-            tablaReservas.setItems(AyudaTablas.aObservable(lista));
+            ListaDoble<Reserva> lista;
+            if (modoHuesped) {
+                // el huesped solo ve sus propias reservas
+                Huesped huesped = ventana.getHuespedSesion();
+                if (huesped == null) {
+                    lista = new ListaDoble<>();
+                    lblMensaje.setText("Entre con su documento en la pantalla Huesped para ver sus reservas");
+                } else {
+                    lista = sistema.reservasDe(huesped.getDocumento());
+                }
+            } else {
+                String documento = tfFiltroDocumento.getText();
+                if (documento == null || documento.isBlank()) {
+                    lista = sistema.todasLasReservas();
+                } else {
+                    lista = sistema.reservasDe(documento.trim());
+                }
+            }
+            AyudaTablas.llenar(tablaReservas, lista);
         } catch (RuntimeException e) {
             AyudaTablas.error(e.getMessage());
         }
@@ -271,10 +296,14 @@ public class PanelReservas implements Pantalla {
             long valor = tfAnticipo.getText().isBlank()
                     ? sistema.anticipoRequerido(reserva.getCodigo())
                     : leerLong(tfAnticipo.getText(), "anticipo");
-            sistema.pagarAnticipo(reserva.getCodigo(), valor);
+            if (modoHuesped) {
+                sistema.pagarAnticipoDe(ventana.getHuespedSesion().getDocumento(), reserva.getCodigo(), valor);
+            } else {
+                sistema.pagarAnticipo(reserva.getCodigo(), valor);
+            }
             lblMensaje.setText("Anticipo pagado: la reserva " + reserva.getCodigo() + " quedo Confirmada");
             tfAnticipo.clear();
-            refrescar();
+            ventana.refrescarTodo();
         } catch (RuntimeException e) {
             AyudaTablas.error(e.getMessage());
         }
@@ -298,9 +327,14 @@ public class PanelReservas implements Pantalla {
             long devolucion = sistema.consultarDevolucion(reserva.getCodigo());
             if (AyudaTablas.confirmar("Se le devolverian " + AyudaTablas.dinero(devolucion)
                     + ". Desea cancelar la reserva " + reserva.getCodigo() + "?")) {
-                sistema.cancelarReserva(reserva.getCodigo());
+                if (modoHuesped) {
+                    // un huesped solo puede cancelar sus propias reservas
+                    sistema.cancelarReservaDe(ventana.getHuespedSesion().getDocumento(), reserva.getCodigo());
+                } else {
+                    sistema.cancelarReserva(reserva.getCodigo());
+                }
                 lblMensaje.setText("Reserva " + reserva.getCodigo() + " cancelada");
-                refrescar();
+                ventana.refrescarTodo();
             }
         } catch (RuntimeException e) {
             AyudaTablas.error(e.getMessage());
@@ -340,7 +374,7 @@ public class PanelReservas implements Pantalla {
     private void procesarSiguiente() {
         try {
             lblResultado.setText(sistema.procesarSiguienteSolicitud());
-            refrescar();
+            ventana.refrescarTodo();
         } catch (RuntimeException e) {
             AyudaTablas.error(e.getMessage());
         }
@@ -402,7 +436,59 @@ public class PanelReservas implements Pantalla {
         return apartamento.getCodigo();
     }
 
+    /**
+     * Pone la pantalla segun el rol. Con el rol Huesped: el titular es siempre el huesped que entro,
+     * solo se ven sus reservas, solo se reserva por Portal y no se ve el canal externo (es del personal).
+     */
+    private void ajustarAlRol() {
+        boolean huesped = ventana.esRolHuesped();
+        if (huesped != modoHuesped) {
+            // cambio el rol: se borra lo que habia escrito el usuario anterior
+            ocupantes = new ListaDoble<>();
+            tfFiltroDocumento.clear();
+            taCotizacion.clear();
+            lblMensaje.setText("");
+        }
+        modoHuesped = huesped;
+        tfDocumento.setDisable(huesped);
+        tfFiltroDocumento.setDisable(huesped);
+        botonVerReservas.setDisable(huesped);
+        if (huesped) {
+            Huesped deLaSesion = ventana.getHuespedSesion();
+            if (deLaSesion == null) {
+                tfDocumento.setText("");
+                tfFiltroDocumento.setText("");
+            } else {
+                tfDocumento.setText(deLaSesion.getDocumento());
+                tfFiltroDocumento.setText(deLaSesion.getDocumento());
+            }
+            if (cbCanal.getItems().size() != 1) {
+                cbCanal.getItems().setAll("Portal");
+                cbCanal.setValue("Portal");
+            }
+            pestanias.getTabs().remove(tabCanalExterno);
+        } else {
+            if (cbCanal.getItems().size() != 2) {
+                cbCanal.getItems().setAll("Portal", "Directa");
+                cbCanal.setValue("Portal");
+            }
+            if (!pestanias.getTabs().contains(tabCanalExterno)) {
+                pestanias.getTabs().add(tabCanalExterno);
+            }
+        }
+    }
+
+    /**
+     * Con el rol Huesped no se puede reservar ni tocar reservas sin haber entrado con el documento.
+     */
+    private void exigirSesionSiEsHuesped() {
+        if (modoHuesped && ventana.getHuespedSesion() == null) {
+            throw new IllegalArgumentException("Primero entre con su documento en la pantalla Huesped");
+        }
+    }
+
     private Reserva reservaSeleccionada() {
+        exigirSesionSiEsHuesped();
         Reserva reserva = tablaReservas.getSelectionModel().getSelectedItem();
         if (reserva == null) {
             throw new IllegalArgumentException("Escoja una reserva de la tabla");

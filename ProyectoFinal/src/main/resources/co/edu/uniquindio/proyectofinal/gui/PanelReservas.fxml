@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <TabPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-         fx:controller="co.edu.uniquindio.proyectofinal.gui.PanelReservas" tabClosingPolicy="UNAVAILABLE">
+         fx:controller="co.edu.uniquindio.proyectofinal.gui.PanelReservas" fx:id="pestanias" tabClosingPolicy="UNAVAILABLE">
     <tabs>
 
         <Tab text="Disponibilidad y reserva">
@@ -81,7 +81,7 @@
                     <HBox spacing="8" alignment="CENTER_LEFT">
                         <Label text="Documento del huesped"/>
                         <TextField fx:id="tfFiltroDocumento" promptText="(vacio = todas)" prefWidth="150"/>
-                        <Button text="Ver reservas" onAction="#cargarReservas"/>
+                        <Button fx:id="botonVerReservas" text="Ver reservas" onAction="#cargarReservas"/>
                     </HBox>
                     <TableView fx:id="tablaReservas" prefHeight="260">
                         <columns>
@@ -125,7 +125,7 @@
             </content>
         </Tab>
 
-        <Tab text="Canal externo">
+        <Tab fx:id="tabCanalExterno" text="Canal externo">
             <content>
                 <VBox spacing="8">
                     <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>

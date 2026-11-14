@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 
 /**
  * Ayudas para las pantallas: llenar tablas desde nuestras estructuras, llenar columnas,
@@ -30,6 +31,17 @@ public final class AyudaTablas {
             }
         }
         return lista;
+    }
+
+    /**
+     * Pone los datos en la tabla y la obliga a volver a dibujar todas las filas.
+     * Sin el refresh(), si la reserva de una fila es "igual" (mismo codigo) a la que habia antes,
+     * la tabla no redibuja la fila y se sigue viendo el estado viejo (por ejemplo Pendiente
+     * despues de cancelar).
+     */
+    public static <T> void llenar(TableView<T> tabla, Iterable<T> origen) {
+        tabla.setItems(aObservable(origen));
+        tabla.refresh();
     }
 
     /** Dice de donde sale el texto de cada celda de la columna. */

@@ -307,12 +307,12 @@ public class PanelAdministracion implements Pantalla {
         }
     }
 
-    /** Boton "Eliminar": quita el huesped del arbol. */
+    /** Boton "Eliminar": quita el huesped del arbol (no se deja si tiene reservas activas). */
     @FXML
     public void eliminarHuesped() {
         String documento = hueBuscar.getText().trim();
         try {
-            if (sistema.registroHuespedes().eliminar(documento)) {
+            if (sistema.eliminarHuesped(documento)) {
                 hueBuscar.clear();
                 terminar("Huesped " + documento + " eliminado");
             } else {
