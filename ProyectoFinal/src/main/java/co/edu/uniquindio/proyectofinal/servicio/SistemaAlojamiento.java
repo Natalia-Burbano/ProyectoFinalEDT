@@ -272,6 +272,50 @@ public class SistemaAlojamiento {
         return devolucion;
     }
 
+    /**
+     * Elimina un huesped. No se deja si tiene reservas activas (Pendiente, Confirmada o En curso),
+     * porque esas reservas quedarian sin titular. Devuelve false si el huesped no existe.
+     */
+    public boolean eliminarHuesped(String documento) {
+        Huesped huesped = huespedes.buscar(documento);
+        if (huesped == null) {
+            return false;
+        }
+        for (Reserva reserva : gestorReservas.reservasDe(huesped)) {
+            if (reserva.estaActiva()) {
+                throw new IllegalStateException("El huesped " + documento + " tiene la reserva "
+                        + reserva.getCodigo() + " activa. Primero hay que cancelarla o terminarla.");
+            }
+        }
+        return huespedes.eliminar(documento);
+    }
+
+    /**
+     * Devuelve la reserva solo si el titular es el huesped con ese documento.
+     * Si la reserva es de otra persona da IllegalArgumentException.
+     * Asi un huesped no puede tocar las reservas de los demas.
+     */
+    public Reserva reservaDelHuesped(String documento, String codigoReserva) {
+        Huesped huesped = huespedObligatorio(documento);
+        Reserva reserva = reservaObligatoria(codigoReserva);
+        if (!reserva.getTitular().equals(huesped)) {
+            throw new IllegalArgumentException("La reserva " + codigoReserva + " no es suya, no la puede cambiar");
+        }
+        return reserva;
+    }
+
+    /** Un huesped cancela una de sus reservas. Si la reserva es de otro, da error y no se cancela. */
+    public long cancelarReservaDe(String documento, String codigoReserva) {
+        reservaDelHuesped(documento, codigoReserva);
+        return cancelarReserva(codigoReserva);
+    }
+
+    /** Un huesped paga el anticipo de una de sus reservas. Si la reserva es de otro, da error. */
+    public void pagarAnticipoDe(String documento, String codigoReserva, long valor) {
+        reservaDelHuesped(documento, codigoReserva);
+        pagarAnticipo(codigoReserva, valor);
+    }
+
     /** Marca la reserva como No-show. */
     public void marcarNoShow(String codigoReserva) {
         gestorReservas.marcarNoShow(reservaObligatoria(codigoReserva));

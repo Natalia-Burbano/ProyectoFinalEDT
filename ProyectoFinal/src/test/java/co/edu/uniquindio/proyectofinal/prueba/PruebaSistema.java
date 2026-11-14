@@ -135,6 +135,27 @@ public class PruebaSistema {
                 "favorito de un apartamento que no existe da error");
         Prueba.esperarExcepcion(IllegalArgumentException.class, () -> sistema.reservarPortal("999", "A101", f(12, 20), f(12, 22), null, null),
                 "un huesped que no existe da error");
+
+        // Un huesped solo puede cancelar o pagar sus propias reservas
+        Reserva deOtro = sistema.reservarPortal("200", "A101", f(12, 26), f(12, 28), sinAcompanantes(), null);
+        Prueba.esperarExcepcion(IllegalArgumentException.class, () -> sistema.cancelarReservaDe("100", deOtro.getCodigo()),
+                "un huesped no puede cancelar la reserva de otro");
+        Prueba.esperarExcepcion(IllegalArgumentException.class,
+                () -> sistema.pagarAnticipoDe("100", deOtro.getCodigo(), deOtro.getValorTotal()),
+                "un huesped no puede pagar el anticipo de la reserva de otro");
+        Prueba.verificar(deOtro.getEstado() == EstadoReserva.PENDIENTE, "la reserva del otro sigue Pendiente");
+        sistema.pagarAnticipoDe("200", deOtro.getCodigo(), sistema.anticipoRequerido(deOtro.getCodigo()));
+        Prueba.verificar(deOtro.getEstado() == EstadoReserva.CONFIRMADA, "el titular si puede pagar su anticipo");
+
+        // No se elimina un huesped con reservas activas
+        Prueba.esperarExcepcion(IllegalStateException.class, () -> sistema.eliminarHuesped("200"),
+                "no se elimina un huesped con reservas activas");
+        sistema.cancelarReservaDe("200", deOtro.getCodigo());
+        Prueba.verificar(deOtro.getEstado() == EstadoReserva.CANCELADA, "el titular si puede cancelar su reserva");
+        sistema.registrarHuesped(PruebaModelo.huesped("300"));
+        Prueba.verificar(sistema.eliminarHuesped("300") && sistema.buscarHuesped("300") == null,
+                "un huesped sin reservas activas si se elimina");
+        Prueba.verificar(!sistema.eliminarHuesped("300"), "eliminar un huesped que no existe devuelve false");
         Reloj.usarHoraReal();
     }
 }

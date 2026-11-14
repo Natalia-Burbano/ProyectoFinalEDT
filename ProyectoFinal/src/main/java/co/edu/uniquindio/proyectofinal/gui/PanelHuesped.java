@@ -78,50 +78,84 @@ public class PanelHuesped implements Pantalla {
         AyudaTablas.columna(colHTotal, r -> AyudaTablas.dinero(r.getValorTotal()));
     }
 
-    /** Vuelve a mostrar las reservas, favoritos e historial del huesped escogido. */
+    /**
+     * Vuelve a mostrar las reservas, favoritos e historial del huesped que entro.
+     * El huesped que se muestra es siempre el de la sesion de la ventana principal,
+     * asi nadie ve los datos de otro huesped.
+     */
     @Override
     public void refrescar() {
         if (sistema == null) {
             return;
         }
+        Huesped deLaSesion = ventana.getHuespedSesion();
+        if (deLaSesion == null && actual != null) {
+            // se cerro la sesion (o se cambio de rol): se borra lo que se veia del huesped anterior
+            limpiarPerfil();
+        }
+        actual = deLaSesion;
+        // mientras hay alguien adentro no se puede cambiar el documento: para eso esta Salir
+        tfDocumento.setDisable(actual != null);
         if (actual == null) {
             tablaReservas.getItems().clear();
             tablaHistorial.getItems().clear();
             lvFavoritos.getItems().clear();
             return;
         }
-        tablaReservas.setItems(AyudaTablas.aObservable(sistema.reservasDe(actual.getDocumento())));
-        tablaHistorial.setItems(AyudaTablas.aObservable(sistema.historial(actual.getDocumento())));
+        AyudaTablas.llenar(tablaReservas, sistema.reservasDe(actual.getDocumento()));
+        AyudaTablas.llenar(tablaHistorial, sistema.historial(actual.getDocumento()));
         lvFavoritos.setItems(AyudaTablas.aObservable(actual.getFavoritos()));
     }
 
+    /**
+     * Boton "Entrar": busca al huesped por documento y lo deja como el que esta usando el sistema.
+     */
     @FXML
     private void buscar() {
         try {
-            Huesped encontrado = sistema.buscarHuesped(tfDocumento.getText());
+            Huesped encontrado = sistema.buscarHuesped(tfDocumento.getText().trim());
             if (encontrado == null) {
-                throw new IllegalArgumentException("No existe un huesped con ese documento. Llene el perfil y pulse Registrar.");
+                throw new IllegalArgumentException("No existe un huesped con ese documento. Llene el perfil y pulse Registrar nuevo.");
             }
-            actual = encontrado;
+            ventana.iniciarSesion(encontrado); // esto refresca todas las pantallas
             mostrarPerfil();
-            refrescar();
+            lblEstado.setText("Entro como " + encontrado.getNombre());
         } catch (RuntimeException e) {
             AyudaTablas.error(e.getMessage());
         }
     }
 
+    /**
+     * Boton "Salir": cierra la sesion del huesped para que pueda entrar otro.
+     */
+    @FXML
+    private void salir() {
+        if (actual == null) {
+            AyudaTablas.error("Nadie ha entrado todavia");
+            return;
+        }
+        ventana.cerrarSesion();
+        limpiarPerfil();
+        lblEstado.setText("Salio. Escriba otro documento y pulse Entrar.");
+    }
+
+    /**
+     * Boton "Registrar nuevo": crea el huesped y lo deja adentro.
+     */
     @FXML
     private void registrar() {
         try {
+            if (actual != null) {
+                throw new IllegalArgumentException("Ya hay un huesped adentro. Pulse Salir para registrar otro.");
+            }
             if (dpNacimiento.getValue() == null) {
                 throw new IllegalArgumentException("Escoja la fecha de nacimiento");
             }
-            Huesped nuevo = new Huesped(tfDocumento.getText(), tfNombre.getText(), dpNacimiento.getValue(),
+            Huesped nuevo = new Huesped(tfDocumento.getText().trim(), tfNombre.getText(), dpNacimiento.getValue(),
                     tfTelefono.getText(), tfCorreo.getText(), tfRutaFoto.getText());
             sistema.registrarHuesped(nuevo);
-            actual = nuevo;
+            ventana.iniciarSesion(nuevo);
             lblEstado.setText("Huesped registrado: " + nuevo.getNombre());
-            refrescar();
         } catch (RuntimeException e) {
             AyudaTablas.error(e.getMessage());
         }
@@ -130,15 +164,14 @@ public class PanelHuesped implements Pantalla {
     @FXML
     private void guardarCambios() {
         try {
-            if (actual == null) {
-                throw new IllegalArgumentException("Primero busque o registre un huesped");
-            }
+            exigirHuesped();
             actual.setNombre(tfNombre.getText());
             actual.setTelefono(tfTelefono.getText());
             actual.setCorreo(tfCorreo.getText());
             actual.setRutaFoto(tfRutaFoto.getText());
             lblEstado.setText("Cambios guardados");
             mostrarPerfil();
+            ventana.refrescarTodo(); // el nombre nuevo tambien se ve en las otras pantallas
         } catch (RuntimeException e) {
             AyudaTablas.error(e.getMessage());
         }
@@ -157,9 +190,14 @@ public class PanelHuesped implements Pantalla {
         }
     }
 
+    /**
+     * Boton "Cancelar": muestra cuanto se devolveria y, si acepta, cancela la reserva.
+     * Solo se pueden cancelar las reservas propias (lo revisa tambien SistemaAlojamiento).
+     */
     @FXML
     private void cancelarReserva() {
         try {
+            exigirHuesped();
             Reserva reserva = tablaReservas.getSelectionModel().getSelectedItem();
             if (reserva == null) {
                 throw new IllegalArgumentException("Escoja una reserva de la tabla");
@@ -167,9 +205,9 @@ public class PanelHuesped implements Pantalla {
             long devolucion = sistema.consultarDevolucion(reserva.getCodigo());
             if (AyudaTablas.confirmar("Si cancela la reserva " + reserva.getCodigo() + " se le devolverian "
                     + AyudaTablas.dinero(devolucion) + ". Desea cancelarla?")) {
-                sistema.cancelarReserva(reserva.getCodigo());
+                sistema.cancelarReservaDe(actual.getDocumento(), reserva.getCodigo());
                 lblEstado.setText("Reserva " + reserva.getCodigo() + " cancelada");
-                refrescar();
+                ventana.refrescarTodo(); // tambien se actualizan Inicio, Reservas y Calendario
             }
         } catch (RuntimeException e) {
             AyudaTablas.error(e.getMessage());
@@ -210,8 +248,21 @@ public class PanelHuesped implements Pantalla {
 
     private void exigirHuesped() {
         if (actual == null) {
-            throw new IllegalArgumentException("Primero busque o registre un huesped");
+            throw new IllegalArgumentException("Primero escriba su documento y pulse Entrar (o registrese)");
         }
+    }
+
+    /**
+     * Deja en blanco el perfil, para cuando sale el huesped.
+     */
+    private void limpiarPerfil() {
+        tfDocumento.clear();
+        tfNombre.clear();
+        dpNacimiento.setValue(null);
+        tfTelefono.clear();
+        tfCorreo.clear();
+        tfRutaFoto.clear();
+        ivFoto.setImage(null);
     }
 
     private void mostrarPerfil() {
