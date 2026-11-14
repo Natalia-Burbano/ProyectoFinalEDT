@@ -143,6 +143,8 @@ public class MapaEdificio {
     /**
      * Sale de recepcion y une las rutas mas cortas en el orden de los codigos dados.
      * Si a un apartamento no se llega (pasillos cerrados) se salta.
+     * Tambien se salta si el apartamento no esta dibujado en el mapa (por ejemplo uno que se
+     * agrego desde Administracion), para que la ruta de los demas se siga pudiendo calcular.
      */
     public Ruta rutaPreparacion(ListaDoble<String> codigos) {
         if (codigos == null) {
@@ -161,7 +163,7 @@ public class MapaEdificio {
         for (String codigo : codigos) {
             NodoMapa destino = buscarApartamento(codigo);
             if (destino == null) {
-                throw new IllegalArgumentException("No hay un apartamento " + codigo + " en el mapa");
+                continue;                   // no esta en el mapa: no se puede llegar caminando
             }
             Ruta tramo = rutaMasCorta(actual.getId(), destino.getId());
             if (tramo == null) {
