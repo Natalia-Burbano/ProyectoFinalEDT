@@ -2,6 +2,7 @@ package co.edu.uniquindio.proyectofinal.gui;
 
 import co.edu.uniquindio.proyectofinal.modelo.Apartamento;
 import co.edu.uniquindio.proyectofinal.modelo.EstadoApartamento;
+import co.edu.uniquindio.proyectofinal.modelo.Huesped;
 import co.edu.uniquindio.proyectofinal.modelo.Reserva;
 import co.edu.uniquindio.proyectofinal.servicio.SistemaAlojamiento;
 import co.edu.uniquindio.proyectofinal.util.Reloj;
@@ -94,8 +95,7 @@ public class PanelCalendario implements Pantalla {
         Reserva reserva = apartamento.getReservas().reservaLaNoche(noche);
         if (reserva != null) {
             Label celda = celda("", COLOR_OCUPADA);
-            Tooltip.install(celda, new Tooltip(reserva.getCodigo() + " - " + reserva.getTitular().getNombre()
-                    + " (" + reserva.getEstado() + ")"));
+            Tooltip.install(celda, new Tooltip(textoDeReserva(reserva)));
             return celda;
         }
         if (apartamento.getEstado() == EstadoApartamento.FUERA_DE_SERVICIO) {
@@ -104,6 +104,20 @@ public class PanelCalendario implements Pantalla {
             return celda;
         }
         return celda("", COLOR_LIBRE);
+    }
+
+    /**
+     * Lo que se ve al pasar el mouse por una noche ocupada.
+     * Con el rol Huesped no se muestran los datos de las reservas de otras personas.
+     */
+    private String textoDeReserva(Reserva reserva) {
+        if (ventana.esRolHuesped()) {
+            Huesped deLaSesion = ventana.getHuespedSesion();
+            if (deLaSesion == null || !reserva.getTitular().equals(deLaSesion)) {
+                return "Ocupada";
+            }
+        }
+        return reserva.getCodigo() + " - " + reserva.getTitular().getNombre() + " (" + reserva.getEstado() + ")";
     }
 
     private Label celda(String texto, String color) {

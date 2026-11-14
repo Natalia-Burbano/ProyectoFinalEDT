@@ -22,6 +22,7 @@
                      </children>
                   </VBox>
                   <Region HBox.hgrow="ALWAYS" />
+                  <Label fx:id="etiquetaSesion" styleClass="fecha" />
                   <Label fx:id="etiquetaFecha" styleClass="fecha" />
                   <ComboBox fx:id="comboRol" prefWidth="170.0" styleClass="combo-rol" />
                   <Button mnemonicParsing="false" onAction="#cargarEscenario" styleClass="boton-principal" text="Cargar escenario de prueba" />

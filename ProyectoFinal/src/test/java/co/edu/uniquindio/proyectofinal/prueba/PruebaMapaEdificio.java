@@ -100,6 +100,9 @@ public class PruebaMapaEdificio {
                 "la ruta de preparacion sale de REC y pasa por A201 y luego A101");
         Prueba.verificar(mapa.rutaPreparacion(new ListaDoble<String>()).getNodos().tamanio() == 1,
                 "sin apartamentos pendientes la ruta es solo REC");
+        codigos.agregarAlInicio("C999"); // un apartamento que no esta dibujado en el mapa
+        Prueba.verificar(mapa.rutaPreparacion(codigos).getDistancia() == 34,
+                "un apartamento que no esta en el mapa se salta y la ruta de los demas sigue igual");
 
         // agrupar por bloque
         MapaEdificio mapa2 = new MapaEdificio();

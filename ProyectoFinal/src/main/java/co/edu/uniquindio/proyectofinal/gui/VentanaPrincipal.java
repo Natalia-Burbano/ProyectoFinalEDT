@@ -4,6 +4,7 @@ import co.edu.uniquindio.proyectofinal.app.App;
 import co.edu.uniquindio.proyectofinal.datos.CargadorEscenario;
 import co.edu.uniquindio.proyectofinal.estructuras.ListaDoble;
 import co.edu.uniquindio.proyectofinal.estructuras.Pila;
+import co.edu.uniquindio.proyectofinal.modelo.Huesped;
 import co.edu.uniquindio.proyectofinal.servicio.SistemaAlojamiento;
 import co.edu.uniquindio.proyectofinal.util.Reloj;
 import javafx.fxml.FXML;
@@ -31,7 +32,8 @@ import java.time.format.DateTimeFormatter;
 public class VentanaPrincipal {
 
     // pantallas que ve cada rol (cada nombre corresponde al archivo Panel<Nombre>.fxml)
-    private static final String[] PANTALLAS_HUESPED = {"Inicio", "Reservas", "Calendario", "Huesped"};
+    // el huesped empieza en su pantalla, porque primero tiene que entrar con su documento
+    private static final String[] PANTALLAS_HUESPED = {"Huesped", "Inicio", "Reservas", "Calendario"};
     private static final String[] PANTALLAS_RECEPCIONISTA = {"Inicio", "Reservas", "Recepcion", "Preparacion", "Calendario", "Mapa"};
     private static final String[] PANTALLAS_ADMINISTRADOR = {"Inicio", "Mapa", "Calendario", "Estadisticas", "Administracion"};
 
@@ -40,18 +42,21 @@ public class VentanaPrincipal {
     @FXML private Button botonAtras;
     @FXML private StackPane contenedor;
     @FXML private Label etiquetaFecha;
+    @FXML private Label etiquetaSesion;
     @FXML private Label etiquetaMensaje;
 
     private SistemaAlojamiento sistema;
     private Pila<String> historial;                        // pantallas anteriores, para el boton Atras
     private final ListaDoble<PantallaCargada> cargadas;    // pantallas que ya se cargaron una vez
     private String actual;                                 // nombre de la pantalla que se esta viendo
+    private Huesped huespedSesion;                         // el huesped que entro (solo en el rol Huesped)
 
     /** JavaFX crea el controlador con este constructor cuando carga el fxml. */
     public VentanaPrincipal() {
         historial = new Pila<>();
         cargadas = new ListaDoble<>();
         actual = null;
+        huespedSesion = null;
     }
 
     /**
@@ -65,6 +70,7 @@ public class VentanaPrincipal {
         comboRol.setOnAction(evento -> cambiarRol());
         crearBotones();
         actualizarFecha();
+        actualizarSesion();
         irA("Inicio");
     }
 
@@ -103,17 +109,62 @@ public class VentanaPrincipal {
             }
         }
         actualizarFecha();
+        actualizarSesion();
     }
 
     /**
-     * Cuando se escoge otro rol cambian los botones y se vuelve al Inicio.
+     * Cuando se escoge otro rol cambian los botones y se va a la primera pantalla del rol.
+     * Al cambiar de rol se cierra la sesion del huesped que hubiera.
      */
     public void cambiarRol() {
         historial = new Pila<>();
         actual = null;
+        huespedSesion = null;
+        actualizarSesion();
         crearBotones();
-        irA("Inicio");
-        mostrarMensaje("Ahora estas viendo el sistema como " + comboRol.getValue());
+        irA(pantallasDelRol()[0]);
+        if (esRolHuesped()) {
+            mostrarMensaje("Escriba su documento y pulse Entrar para ver sus reservas");
+        } else {
+            mostrarMensaje("Ahora estas viendo el sistema como " + comboRol.getValue());
+        }
+    }
+
+    // ------------------ sesion del huesped ------------------
+
+    /**
+     * Dice si se esta usando el sistema con el rol Huesped.
+     * En ese rol cada huesped solo ve y cambia sus propias reservas.
+     */
+    public boolean esRolHuesped() {
+        return "Huesped".equals(comboRol.getValue());
+    }
+
+    /**
+     * El huesped que entro con su documento, o null si nadie ha entrado.
+     */
+    public Huesped getHuespedSesion() {
+        return huespedSesion;
+    }
+
+    /**
+     * Deja al huesped como el que esta usando el sistema y actualiza todas las pantallas.
+     */
+    public void iniciarSesion(Huesped huesped) {
+        huespedSesion = huesped;
+        actualizarSesion();
+        refrescarTodo();
+        mostrarMensaje("Bienvenido(a), " + huesped.getNombre());
+    }
+
+    /**
+     * El huesped sale: ya nadie esta usando el sistema como huesped.
+     */
+    public void cerrarSesion() {
+        huespedSesion = null;
+        actualizarSesion();
+        refrescarTodo();
+        mostrarMensaje("Sesion cerrada");
     }
 
     /**
@@ -267,6 +318,19 @@ public class VentanaPrincipal {
         VBox caja = new VBox(8, titulo, texto);
         caja.getStyleClass().add("pantalla-vacia");
         return caja;
+    }
+
+    /**
+     * Arriba se muestra quien entro como huesped. En los otros roles no se muestra nada.
+     */
+    private void actualizarSesion() {
+        if (!esRolHuesped()) {
+            etiquetaSesion.setText("");
+        } else if (huespedSesion == null) {
+            etiquetaSesion.setText("Sin entrar");
+        } else {
+            etiquetaSesion.setText("Huesped: " + huespedSesion.getNombre());
+        }
     }
 
     private void actualizarFecha() {
