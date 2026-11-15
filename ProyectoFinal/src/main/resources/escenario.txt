@@ -1,7 +1,7 @@
 // ============================================================
 // ESCENARIO DE PRUEBA - Aparta-Suites UQ
 // Campos separados por ; | Fechas AAAA-MM-DD | Lineas con // son comentarios
-// Fecha de la demo: 2026-11-20 (el Reloj se fija a esa fecha antes de cargar)
+// Fecha de la demo: 2026-11-16 (el Reloj se fija a esa fecha antes de cargar)
 // En #RESERVAS, "ocupantes" son los acompanantes (nombre:fechaNacimiento separados por |);
 // el titular se agrega solo como ocupante. Si no hay acompanantes el campo queda vacio.
 // ============================================================

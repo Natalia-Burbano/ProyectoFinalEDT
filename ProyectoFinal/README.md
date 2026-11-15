@@ -1,88 +1,115 @@
-# SGA · Sistema de Gestión de Alojamiento (Aparta-Suites UQ)
+# SGA - Sistema de Gestión de Alojamiento (Aparta-Suites UQ)
 
 Proyecto final de Estructuras de Datos, Universidad del Quindío, 2026-2.
 
-Es una aplicación de escritorio para manejar el alojamiento Aparta-Suites UQ, en Salento. Sirve para manejar reservas por los tres canales (portal, directa y externa), check-in y check-out, el folio de cada reserva, la cola de preparación de apartamentos y el mapa del edificio. Todo funciona sobre estructuras de datos hechas por nosotros, sin usar las colecciones de `java.util`.
+Integrantes: Natalia Burbano, Juan Manuel y José Gabriel Paguay.
 
-## Integrantes
+## Cómo correr la aplicación
 
-| Integrante | Le toca |
-|---|---|
-| Juan Manuel | Árbol binario de búsqueda, apartamentos, huéspedes, estancia, reservas y `SistemaAlojamiento` |
-| Natalia Burbano | Lista doble, pila, cola y cola de prioridad, temporadas, cotización, folio, preparación, canal externo y vencimientos |
-| José Gabriel Paguay | Grafo, conjunto y lista circular, mapa del edificio, grupos grandes, turnos, empleados, carga del escenario y reportes |
+Se necesita IntelliJ IDEA y Java (JDK). Maven descarga JavaFX solo, no hay que instalarlo aparte.
 
-El reparto completo, método por método, está en el documento *Proyecto final SGA · Reparto del código* (versión 2).
+1. Clonar el repositorio y abrir la carpeta ProyectoFinal en IntelliJ. Esperar a que cargue Maven.
+2. Correr la clase app/App.java (clic derecho, Run). También se puede desde la terminal, dentro de ProyectoFinal:
+    - Windows: mvnw.cmd clean javafx:run
+    - Linux o Mac: ./mvnw clean javafx:run
+3. En la ventana, darle al botón *Cargar escenario de prueba*. Carga 12 apartamentos, el mapa del edificio, 12 huéspedes, 6 empleados y 10 reservas desde src/main/resources/escenario.txt.
+4. Escoger el rol arriba (Huésped, Recepcionista o Administrador). Cada rol ve sus propias pantallas.
 
-## Cómo correr el proyecto
+Al cargar el escenario, la fecha del sistema queda en el 20 de noviembre de 2026 a las 8:00, que es el día de la demo. La app no guarda nada al cerrarla: cada vez que se abre hay que cargar el escenario otra vez.
 
-Lo que se necesita:
-- IntelliJ IDEA.
-- Java (JDK) instalado.
-- SceneBuilder, solo si se van a editar las pantallas.
+## Pruebas automáticas
 
-No hay que instalar Maven ni JavaFX aparte, porque Maven los descarga solo.
+Correr src/test/java/.../prueba/TodasLasPruebas.java (clic derecho, Run). Corre todas las pruebas del proyecto y al final muestra el resultado:
 
-Pasos:
-1. Clonar el repositorio y abrir la carpeta `ProyectoFinal` en IntelliJ. Esperar a que cargue Maven.
-2. **Aplicación:** clic derecho sobre `app.App` y Run. También se puede correr desde la terminal, dentro de `ProyectoFinal`, con `./mvnw clean javafx:run` (en Windows: `mvnw.cmd clean javafx:run`).
-3. **Pruebas:** clic derecho sobre `prueba.TodasLasPruebas` y Run. Al final muestra cuántas pruebas dieron OK y cuántas FALLA.
-4. **Datos de prueba:** dentro de la aplicación, el botón *Cargar escenario de prueba* carga apartamentos, pasillos, huéspedes, empleados y reservas desde `src/main/resources/escenario.txt`.
 
-## Cómo está organizado
+Resultado: 536 OK, 0 fallas
 
-El código va en `src/main/java/co/edu/uniquindio/sga/`, las pruebas en `src/test/java/co/edu/uniquindio/sga/`, y las pantallas (`.fxml`) y el escenario en `src/main/resources/`.
+
+Cada clase de prueba también tiene su propio main, así que se puede correr sola (por ejemplo PruebaGrafo o PruebaFolio).
+
+## Pruebas manuales
+
+Hacerlas en este orden, porque unas dependen de otras. Primero cargar el escenario.
+
+*Recepcionista*
+
+1. Recepción: darle Pasar turno varias veces. Los recepcionistas van en círculo (Carolina, Mauricio, Natalia y otra vez Carolina).
+2. Check-in de R0001. En Inicio, A101 queda ocupado.
+3. En el folio de R0001: registrar un cargo, un pago y darle Deshacer última dos veces. Se revierten en orden contrario.
+4. Check-out de R0001 y check-in y check-out de R0002. A101 y A202 quedan pendientes de preparación.
+5. Preparación: salen los dos en la cola con su ruta sugerida. Darle Iniciar siguiente y luego Terminar. El apartamento queda preparado.
+6. Reservas: buscar disponibilidad del 2026-12-01 al 2026-12-03, cotizar y crear una reserva por Portal. Queda pendiente. En la pestaña Reservas, pagar el anticipo (queda confirmada), ver la devolución y cancelarla.
+7. Cotizar del 2026-12-12 al 2026-12-17: las noches hasta el 14 salen en temporada baja y desde el 15 en alta. Un niño menor de 6 años no se cobra.
+8. Grupos grandes: 20 personas. Sale la combinación con menos apartamentos.
+9. Canal externo: simular una solicitud y procesarla. Si choca con otra reserva, aparece en Conflictos de canal.
+10. Mapa: calcular una ruta, cerrar un pasillo y volver a calcularla (busca otro camino). Probar BFS, DFS y Agrupar por bloque.
+
+*Huésped*
+
+11. Entrar con el documento 1000000001. Solo se ven las reservas de Valeria Mora. En Historial sale R0001.
+12. Agregar y quitar favoritos. Un favorito repetido no se agrega dos veces.
+
+*Administrador*
+
+13. Agregar, buscar y eliminar empleados, apartamentos y huéspedes. Ver los recorridos inorden, preorden y postorden.
+14. Poner A102 fuera de servicio: sale bloqueado en Inicio y en Calendario, y no aparece al buscar disponibilidad. Al reactivarlo entra a la cola de preparación.
+15. Definir un periodo de temporada y cambiar una tarifa. La cotización usa la tarifa nueva.
+16. Estadísticas: escoger un rango de fechas y Actualizar.
+
+*Errores que deben mostrar un mensaje sin cerrar la app*
+
+- Check-in de una reserva pendiente, de otra fecha o con el apartamento sin preparar.
+- Reservar más personas de las que caben, en fechas que se cruzan con otra reserva o en una fecha que ya pasó.
+- Pagar un anticipo menor al 30 %.
+- Deshacer en un folio vacío o procesar el canal externo con la cola vacía.
+- Dejar campos vacíos o escribir letras donde van números o fechas.
+
+## Qué hay en cada paquete
+
+El código está en src/main/java/co/edu/uniquindio/proyectofinal/ y las pruebas en src/test/java/co/edu/uniquindio/proyectofinal/.
 
 | Paquete | Qué tiene |
 |---|---|
-| `util` | `Prueba` (el ayudante de las pruebas) y `Reloj` (la fecha y hora que usa todo el sistema) |
-| `excepciones` | Las 5 excepciones propias |
-| `estructuras` | Nuestras estructuras genéricas |
-| `modelo` | Apartamento, Huesped, Reserva, Folio, Estancia, enumeraciones, etc. |
-| `comparadores` | Los órdenes alternativos (`Comparator`) |
-| `servicio` | La lógica del sistema y `SistemaAlojamiento`, la clase que une todo |
-| `datos` | `CargadorEscenario`, que lee el archivo plano |
-| `gui` | Los controladores de las pantallas |
-| `app` | `App`, donde arranca la aplicación |
-| `prueba` (en test) | `TodasLasPruebas` y una prueba por clase |
+| estructuras | Nuestras estructuras genéricas: ListaDoble, Pila, Cola, ColaPrioridad, ArbolBinarioBusqueda, Grafo, ListaCircular y Conjunto |
+| modelo | Las clases del negocio: Apartamento, Huesped, Reserva, Estancia, Ocupante, Folio, Movimiento, Empleado, NodoMapa, Ruta, las temporadas y las enumeraciones de estados, canales y roles |
+| servicio | La lógica del sistema. SistemaAlojamiento une todo; los demás se encargan de una parte cada uno: reservas, folios, cotización, preparación, canal externo, vencimientos, mapa del edificio, grupos grandes, turnos y reportes |
+| comparadores | Los órdenes con Comparator: apartamentos por precio, capacidad, dormitorios y número de reservas, y la prioridad de la cola de preparación |
+| excepciones | Las excepciones propias: reserva solapada, capacidad excedida, fechas inválidas, transición de estado inválida y estructura vacía |
+| datos | CargadorEscenario, que lee el archivo escenario.txt |
+| gui | Los controladores de las 9 pantallas, la ventana principal y las ayudas para llenar tablas |
+| app | App, donde arranca la aplicación |
+| util | Reloj, la fecha y hora que usa todo el sistema |
+| prueba (test) | Una clase de prueba por tema y TodasLasPruebas, que las corre todas |
 
-## Estructuras propias
+Las pantallas (.fxml) y los estilos (.css) están en src/main/resources/co/edu/uniquindio/proyectofinal/gui/.
 
-Todas son genéricas, implementan `Iterable<T>` con su propio iterador y no conocen ninguna clase del sistema.
+## Decisiones que tomamos
 
-| Estructura | Para qué se usa |
-|---|---|
-| `Grafo` | Mapa del edificio: apartamentos, recepción, escaleras y cuartos de aseo, unidos por pasillos con su distancia. Ruta más corta con Dijkstra; recorridos BFS y DFS |
-| `ColaPrioridad` | Cola de preparación (primero los apartamentos con entrada hoy) y reservas pendientes por hora de vencimiento. Por dentro es una lista enlazada ordenada |
-| `Cola` | Solicitudes del canal externo, en orden de llegada |
-| `Pila` | Deshacer la última operación del folio y el botón Atrás entre pantallas |
-| `ListaDoble` | Historial de estancias, ocupantes de una reserva y desglose de noches cobradas |
-| `ListaCircular` | Turnos de los recepcionistas |
-| `ArbolBinarioBusqueda` | Apartamentos por código, huéspedes por documento, empleados, folios y las reservas de cada apartamento por fecha de entrada |
-| `Conjunto` | Apartamentos favoritos de cada huésped, sin repetidos |
+*Estructuras*
 
-## Reglas del equipo
+- No usamos ninguna colección de java.util (ArrayList, HashMap, PriorityQueue, Stack, etc.). Todas las estructuras son nuestras, genéricas y con su propio iterador.
+- La cola de prioridad es una lista enlazada que se mantiene ordenada. Insertar recorre la lista y sacar el primero es inmediato. Si dos elementos tienen la misma prioridad, sale primero el que llegó antes.
+- Usamos el árbol binario de búsqueda para todo lo que se busca por una clave: apartamentos por código, huéspedes y empleados por documento, folios por reserva y las reservas de cada apartamento por fecha de entrada.
+- El grafo del edificio no es dirigido y cada pasillo tiene sus metros. Un pasillo se puede cerrar sin borrarlo, y así las rutas buscan otro camino.
+- La pila guarda las operaciones del folio para deshacer la última, y también las pantallas visitadas para el botón Atrás.
 
-- Nada de colecciones de `java.util` (ArrayList, LinkedList, HashMap, PriorityQueue, Stack, etc.). Sí se puede usar `Iterator`, `Iterable`, `Comparator`, `NoSuchElementException`, `Objects`, las fechas de `java.time`, arreglos normales y JavaFX.
-- Sin tildes ni ñ en el código: textos, nombres y comentarios (`tamanio`, `anio`, `Quindio`).
-- Cada clase y cada método público lleva un comentario corto, en lenguaje sencillo, que dice qué hace. En los métodos recursivos se marca el CASO BASE y el CASO RECURSIVO.
-- La fecha de "hoy" se pide siempre a `Reloj`, nunca a `LocalDate.now()`.
-- El dinero va en pesos, con `long`.
-- Las pruebas son clases con `main` que usan el ayudante `Prueba` (no usamos JUnit).
-- Nadie cambia el nombre, los parámetros o el retorno de un método sin avisar en el grupo.
+*Reglas del negocio*
 
-## Git
+- El titular de la reserva también cuenta como ocupante.
+- Los niños menores de 6 años ocupan cupo pero no pagan.
+- Cada apartamento tiene tres tarifas por persona por noche: baja, media y alta. Cada noche se cobra con la temporada en la que cae. Una noche que no está en ningún periodo se cobra como temporada baja.
+- Las reservas del portal quedan pendientes hasta que se paga el 30 %. Si pasan 24 horas sin pagar, se cancelan con el botón Revisar vencimientos. Las reservas directas y las del canal externo quedan confirmadas de una vez.
+- Al cancelar se devuelve todo lo pagado si faltan 7 días o más para la entrada, la mitad si faltan de 2 a 6 días y nada si faltan menos de 2.
+- Deshacer no borra el movimiento del folio: registra uno contrario, para que quede el historial completo.
+- Solo se puede hacer check-in el día de entrada, con la reserva confirmada y el apartamento preparado.
+- Después del check-out el apartamento entra a la cola de preparación. Salen primero los que tienen una entrada ese mismo día, ordenados por la hora de llegada.
+- Las solicitudes del canal externo se atienden en orden de llegada. Si chocan con otra reserva no se crean y quedan registradas como conflicto.
+- Los grupos grandes se reparten en el menor número de apartamentos posible.
+- En el rol Huésped, cada huésped entra con su documento y solo ve y cambia sus propias reservas.
 
-- Cada uno trabaja en su rama: `Natalia`, `JuanManuel` y `Gabriel`. Nadie trabaja directo en `main`.
-- Antes de empezar algo: `git checkout TuRama` y `git pull origin main`.
-- Los commits usan conventional commits, `tipo(alcance): descripcion`. Los tipos son `feat`, `test`, `fix`, `docs`, `refactor` y `chore`. Por ejemplo: `feat(estructuras): pila generica con iterador`.
-- Cada parte se sube con un PR hacia `main`, con la salida de las pruebas en la descripción. Los revisores son: Gabriel revisa a Juan Manuel, Juan Manuel a Natalia y Natalia a Gabriel. Se une con *Create a merge commit*, nunca con Squash.
-- Cada integrante debe tener mínimo 10 commits.
+*Código*
 
-## Decisiones nuestras (pendientes de confirmar con el profe)
-
-- El titular también es ocupante: ocupa cupo y paga si tiene 6 años o más.
-- Una reserva por Portal queda Pendiente hasta que se pague el 30 %. Las reservas Directa y Externa quedan Confirmadas de una vez.
-- Devolución al cancelar: con 7 días o más antes de la entrada se devuelve todo lo pagado; de 2 a 6 días, la mitad; con menos de 2 días, nada.
-- Cada apartamento tiene tres tarifas por persona por noche (baja, media y alta). Una noche que no cae en ningún periodo definido es temporada Baja.
-- La cola de prioridad se hizo con una lista enlazada ordenada en vez de montículo, porque se arma con lo que vimos de listas y colas y es más fácil de explicar y modificar.
+- Sin tildes ni ñ en el código (tamanio, anio).
+- La fecha de "hoy" siempre se pide a Reloj, para que el escenario de prueba funcione igual cualquier día.
+- El dinero va en pesos, con long.
+- Las pruebas son clases con main que usan el ayudante Prueba.
